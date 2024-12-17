@@ -2,7 +2,7 @@ import React from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function DarkVariantExample() {
+function SingleCarousel() {
     return (
         <Carousel data-bs-theme="dark" style={{ overflow: 'hidden' }}>
             <Carousel.Item>
@@ -41,9 +41,8 @@ function DarkVariantExample() {
                     <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
                 </Carousel.Caption>
             </Carousel.Item>
-
         </Carousel>
     );
 }
 
-export default DarkVariantExample;
+export default SingleCarousel;

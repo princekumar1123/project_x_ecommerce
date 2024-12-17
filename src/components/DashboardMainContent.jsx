@@ -1,6 +1,6 @@
 import { Divider } from "antd"
 import ResponsiveCarousel from "./MultiCarousel"
-import DarkVariantExample from "./Carousel"
+import SingleCarousel from "./Carousel"
 import { useNavigate } from "react-router-dom"
 
 function DashboardMainContent(dir) {
@@ -8,7 +8,7 @@ function DashboardMainContent(dir) {
     return (
         <>
             <div style={{ position: 'relative', width: '100%' }}>
-                <DarkVariantExample />
+                <SingleCarousel />
             </div>
             <div>
                 <h1 style={{ textAlign: 'center', margin: '20px 0', cursor: "pointer", fontFamily: "cursive" }} onClick={() => navigate("/category")}>Electronic Appliances</h1>

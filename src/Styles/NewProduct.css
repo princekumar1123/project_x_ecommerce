@@ -29,7 +29,6 @@ body {
     font-family:cursive;
 }
 
-/* Fields */
 .field {
     margin-bottom: 15px;
 }
@@ -56,13 +55,11 @@ body {
     border-color: #007bff;
 }
 
-/* Textarea */
 .textarea {
     resize: vertical;
     min-height: 100px;
 }
 
-/* Button */
 .button {
     width: 100%;
     padding: 12px;
@@ -79,12 +76,10 @@ body {
     background-color: #0056b3;
 }
 
-/* Responsive Breakpoints */
 @media (max-width: 600px) {
     .form {
         padding: 15px;
         max-width: 100%;
-        /* margin-top:25%; */
     }
 
 
@@ -111,7 +106,6 @@ body {
     } 
 }
 
-/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;

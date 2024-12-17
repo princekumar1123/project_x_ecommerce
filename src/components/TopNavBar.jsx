@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogoutOutlined } from '@ant-design/icons';
+import {  PlusCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const TopNavBar = () => {
     const navigate = useNavigate()
@@ -20,7 +20,8 @@ const TopNavBar = () => {
                     <span style={{ fontSize: "25px", fontWeight: "bold", fontFamily: "cursive" }}>X Shopping</span>
                 </div>
                 <div >
-                    <LogoutOutlined style={{ cursor: "pointer", fontSize: "20px", fontWeight: "bold" }} onClick={() => navigate("/newproduct")} />
+                    {/* <LogoutOutlined style={{ cursor: "pointer", fontSize: "20px", fontWeight: "bold" }} onClick={() => navigate("/newproduct")} /> */}
+                    <PlusCircleOutlined style={{ cursor: "pointer", fontSize: "25px", fontWeight: "bold", marginRight:"15px" }} onClick={() => navigate("/newproduct")} />
                 </div>
             </div>
         </div>

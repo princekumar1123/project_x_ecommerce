@@ -56,6 +56,7 @@ function ResponsiveCarousel({ dir }) {
             image: 'https://picsum.photos/200/300?random=5',
         },
     ];
+
     return (
         <Carousel
             rtl={dir}
