@@ -37,13 +37,13 @@ const Credential = () => {
     return (
         <div className="OverAll">
             <div className="main">
-                <input type="checkbox" id="chk" aria-hidden="true" />
+                <input className={"loginInput"} type="checkbox" id="chk" aria-hidden="true" />
                 <div className="signup">
                     <form onSubmit={handleSignUp}>
-                        <label htmlFor="chk" aria-hidden="true">
+                        <label className='loginLabel' htmlFor="chk" aria-hidden="true">
                             Sign up
                         </label>
-                        <input
+                        <input className="loginInput"
                             type="text"
                             name="name"
                             placeholder="Name"
@@ -51,7 +51,7 @@ const Credential = () => {
                             value={signupData.name}
                             onChange={handleSignupChange}
                         />
-                        <input
+                        <input className="loginInput"
                             type="email"
                             name="email"
                             placeholder="Email"
@@ -59,7 +59,7 @@ const Credential = () => {
                             value={signupData.email}
                             onChange={handleSignupChange}
                         />
-                        <input
+                        <input className="loginInput"
                             type="tel"
                             name="mobile"
                             placeholder="Mobile"
@@ -67,7 +67,7 @@ const Credential = () => {
                             value={signupData.mobile}
                             onChange={handleSignupChange}
                         />
-                        <input
+                        <input className="loginInput"
                             type="password"
                             name="password"
                             placeholder="Password"
@@ -81,10 +81,10 @@ const Credential = () => {
 
                 <div className="login">
                     <form onSubmit={handleLogin}>
-                        <label htmlFor="chk" aria-hidden="true">
+                        <label className='loginLabel' htmlFor="chk" aria-hidden="true">
                             Login
                         </label>
-                        <input
+                        <input className="loginInput"
                             type="email"
                             name="email"
                             placeholder="Email"
@@ -92,7 +92,7 @@ const Credential = () => {
                             value={loginData.email}
                             onChange={handleLoginChange}
                         />
-                        <input
+                        <input className="loginInput"
                             type="password"
                             name="password"
                             placeholder="Password"
@@ -100,7 +100,7 @@ const Credential = () => {
                             value={loginData.password}
                             onChange={handleLoginChange}
                         />
-                        <button  className='creBtn'  type="submit">Login</button>
+                        <button className='creBtn' type="submit">Login</button>
                     </form>
                 </div>
             </div>

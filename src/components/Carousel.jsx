@@ -4,11 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function DarkVariantExample() {
     return (
-        <Carousel data-bs-theme="dark" style={{  overflow: 'hidden' }}>
+        <Carousel data-bs-theme="dark" style={{ overflow: 'hidden' }}>
             <Carousel.Item>
                 <img
                     className="d-block w-100"
-                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }} 
+                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
                     src="https://picsum.photos/id/237/1920/1080"
                     alt="First slide"
                 />
@@ -32,7 +32,7 @@ function DarkVariantExample() {
             <Carousel.Item>
                 <img
                     className="d-block w-100"
-                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }} 
+                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
                     src="https://picsum.photos/seed/picsum/1920/1080"
                     alt="Third slide"
                 />
@@ -41,7 +41,7 @@ function DarkVariantExample() {
                     <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
                 </Carousel.Caption>
             </Carousel.Item>
-            
+
         </Carousel>
     );
 }
