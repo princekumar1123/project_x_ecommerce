@@ -1,0 +1,41 @@
+/* @media (min-width: 768px) and (max-width: 1024px) {
+    
+}
+
+@media (min-width: 1025px) {
+}
+
+@media (min-width: 768px) {
+
+} */
+
+@media (max-width: 767px) {
+    .mainImage {
+        width: 250px;
+        height: 250px;
+    }
+    /* Styles for mobile devices */
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+    .mainImage {
+        margin-top: 9%;
+        width: 280px;
+        height: 280px;
+    }
+
+    /* Styles for tablets */
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+    .mainImage {
+        margin-top: 9%;
+        width: 380px;
+        height: 300px;
+    }
+
+    /* Styles for desktops */
+}

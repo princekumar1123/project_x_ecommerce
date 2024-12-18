@@ -9,7 +9,7 @@ function SingleCarousel() {
                 <img
                     className="d-block w-100"
                     style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
-                    src="https://picsum.photos/id/237/1920/1080"
+                    src={`https://picsum.photos/200/300?grayscale`}
                     alt="First slide"
                 />
                 <Carousel.Caption>

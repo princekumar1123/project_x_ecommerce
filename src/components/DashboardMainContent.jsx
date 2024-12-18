@@ -2,9 +2,17 @@ import { Divider } from "antd"
 import ResponsiveCarousel from "./MultiCarousel"
 import SingleCarousel from "./Carousel"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 function DashboardMainContent(dir) {
     const navigate = useNavigate()
+
+
+
+    // useEffect(() => {
+    //     window.scrollTo(0, 0);
+    // }, []);
+
     return (
         <>
             <div style={{ position: 'relative', width: '100%' }}>

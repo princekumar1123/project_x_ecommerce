@@ -1,0 +1,45 @@
+@media (max-width: 767px) {
+    .icon {
+        width: 65px;
+        height: 65px;
+    }
+
+    .addIcon {
+        font-size: 20px
+    }
+
+    .titleText {
+        font-size: 17px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .icon {
+        width: 75px;
+        height: 75px;
+    }
+
+    .addIcon {
+        font-size: 25px
+    }
+
+    .titleText {
+        font-size: 24px;
+    }
+
+}
+
+@media (min-width: 1025px) {
+    .icon {
+        width: 85px;
+        height: 85px;
+    }
+
+    .addIcon {
+        font-size: 25px
+    }
+
+    .titleText {
+        font-size: 28px;
+    }
+}

@@ -8,7 +8,11 @@ const Footer = () => {
             <footer className="footer">
                 <div className="footer-container">
                     <div className="footer-section">
-                        <img src="e-logo.png" alt="Logo" className="footer-logo" style={{ cursor: "pointer" }} onClick={() => navigate("/")} />
+                        <img src="e-logo.png"
+                            alt="Logo"
+                            className="footer-logo"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => { navigate("/"); window.scrollTo(0, 0) }} />
                         <p>Join our community by using our services and grow your business.</p>
                         <button className="contact-button">Contact Us</button>
                         <div className="social-icons">
