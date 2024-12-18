@@ -369,7 +369,7 @@ const AddProduct = () => {
 
         console.log(payload);
 
-        axios.post('http://localhost:9000/ecommerce/addproduct', payload, {
+        axios.post('http://192.168.1.120:9000/ecommerce/addproduct', payload, {
             headers: { 'Content-Type': 'application/json' },
         });
     };

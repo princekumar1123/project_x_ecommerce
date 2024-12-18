@@ -282,7 +282,7 @@ function CardDetails() {
     const [mainImage, setMainImage] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:9000/ecommerce/getproducts').then((response) => {
+        axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
             console.log("res", response.data);
             const fetchedData = response.data[1];
             setCardData(fetchedData);
