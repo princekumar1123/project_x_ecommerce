@@ -282,7 +282,14 @@ function CardDetails() {
     const [mainImage, setMainImage] = useState(null);
 
     useEffect(() => {
-        axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
+        const headers = {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+        };
+        
+        // axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
+        axios.get('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/getproducts', { headers }).then((response) => {
+
             console.log("res", response.data);
             const fetchedData = response.data[1];
             setCardData(fetchedData);

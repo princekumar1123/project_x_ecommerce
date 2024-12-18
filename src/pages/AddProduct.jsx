@@ -369,8 +369,10 @@ const AddProduct = () => {
 
         console.log(payload);
 
-        axios.post('http://192.168.1.120:9000/ecommerce/addproduct', payload, {
-            headers: { 'Content-Type': 'application/json' },
+     
+        // axios.post('http://192.168.1.120:9000/ecommerce/addproduct', payload, {
+            axios.post('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/addproduct', payload, {
+            headers: { 'Content-Type': 'application/json' ,"ngrok-skip-browser-warning": "true"},
         });
     };
 
