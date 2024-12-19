@@ -1,7 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 
 function CategoriesList() {
+
+    const {state} = useLocation()
+
+    const{category} = state
+
+    console.log("state",category);
+    
     const cards = [
         {
             title: 'Samsung 6.5kg washing machine',

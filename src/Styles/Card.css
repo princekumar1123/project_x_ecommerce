@@ -4,40 +4,107 @@
     padding: 16px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 243px;
-    height: 300px !important;  
+    width: 250px;
+    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: #fff;
+    position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    background-color: #fff;
 }
 
 .card:hover {
-    transform: scale(1.01); 
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    transform: scale(1.01);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card-image {
-    width: 210px;
-    height: 150px;
+    width: 100%;
+    height: 180px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 12px;
-    transition: transform 0.3s ease; 
 }
 
-.card:hover .card-image {
-    transform: scale(1.05); 
-}
-
-.card-content h5 {
+.card-title {
     font-size: 1rem;
     margin: 8px 0;
+    font-weight: bold;
 }
 
-.card-content p {
+.card-description {
     font-size: 0.9rem;
     color: #555;
+    margin-bottom: 8px;
+}
+
+.card-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.star {
+    font-size: 1rem;
+    color: #ddd; /* Default star color */
+    margin-right: 4px;
+}
+
+.star.filled {
+    color: #ffcc00; /* Highlighted star color */
+}
+
+.rating-value {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+    margin-left: 8px;
+    margin-right: 6px;
+}
+
+.reviews-count {
+    color: #555;
+    margin-left: 4px;
+}
+
+.card-pricing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.discount {
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.card-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background-color: #ffd700;
+    color: #000;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
 }

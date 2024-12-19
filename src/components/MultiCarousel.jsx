@@ -1,11 +1,17 @@
-import React from 'react';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
-import Card from './Card';
+import React from "react";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import Card from "./Card";
 import { Link, useNavigate } from 'react-router-dom';
 
-function ResponsiveCarousel({ dir }) {
+
+function ResponsiveCarousel({ data, dir }) {
+
+
+    console.log("data", data);
+
     const navigate = useNavigate()
+
     const responsive = {
         superLargeDesktop: {
             breakpoint: { max: 4000, min: 1024 },
@@ -29,34 +35,6 @@ function ResponsiveCarousel({ dir }) {
         },
     };
 
-    const cards = [
-        {
-            title: 'Samsung 6.5kg washing machine',
-            description: 'This is a wonderful product to buy.',
-            image: 'https://picsum.photos/200/300?random=1',
-        },
-        {
-            title: 'LG Television',
-            description: 'This is 32 inch television.',
-            image: 'https://picsum.photos/200/300?random=2',
-        },
-        {
-            title: 'Sony Home theator',
-            description: 'This is a bass booster.',
-            image: 'https://picsum.photos/200/300?random=3',
-        },
-        {
-            title: 'Mi Watch',
-            description: 'This is calculate the time.',
-            image: 'https://picsum.photos/200/300?random=4',
-        },
-        {
-            title: 'Samsung 1.5ton split AC',
-            description: 'It is used to cool your enviroinment',
-            image: 'https://picsum.photos/200/300?random=5',
-        },
-    ];
-
     return (
         <Carousel
             rtl={dir}
@@ -68,13 +46,17 @@ function ResponsiveCarousel({ dir }) {
             itemClass="carousel-item-padding-40-px"
             customTransition="transform 300ms ease-in-out"
         >
-            {cards.map((card, index) => (
-                <div key={index} style={{ padding: '10px', display: "flex", justifyContent: "center" }} onClick={() => { navigate("/detail") }}>
+            {data.map((item, index) => (
+                <div key={index} style={{ padding: "10px", display: "flex", justifyContent: "center" }} onClick={() => { navigate("/detail", { state: { id: item._id } }) }}>
                     <Card
-                        title={card.title}
-                        description={card.description}
-                        image={card.image}
-                        onClick={() => { }}
+                        title={item.title}
+                        description={item.description}
+                        image={item.image[0]}
+                        rating={item.rating}
+                        reviews={item.review.length}
+                        price={item.maxPrice}
+                        originalPrice={item.maxPrice + (item.maxPrice * item.discount) / 100}
+                        discount={item.discount}
                     />
                 </div>
             ))}

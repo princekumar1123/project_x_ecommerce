@@ -40,7 +40,6 @@ function App() {
           <Route path='newproduct' element={<AddProduct />} />
           <Route path='infi' element={<InfiniteScroll />} />
 
-
         </Route>
         <Route path='/credential' element={<Credential />} />
       </Routes>
