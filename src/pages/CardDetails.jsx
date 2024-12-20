@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Flex, Spin } from 'antd';
@@ -12,13 +12,15 @@ function CardDetails() {
 
 
     const { state } = useLocation();
-    const { id } = state; 
+    const { id } = state;
 
-    console.log("id",id);
-    
+    console.log("id", id);
+
+    const navigate = useNavigate()
+
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0, 0)
         const headers = {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true"
@@ -53,7 +55,7 @@ function CardDetails() {
                     color: "#555",
                 }}
             >
-                
+
                 <Spin size="large" />
 
             </div>
@@ -88,7 +90,7 @@ function CardDetails() {
                 }}
             >
                 <img
-                    src={mainImage || "placeholder.jpg"} // Fallback to a placeholder
+                    src={mainImage || "placeholder.jpg"}
                     alt="Product"
                     className="mainImage"
                     style={{
@@ -97,7 +99,7 @@ function CardDetails() {
                         marginBottom: "1rem",
                         width: "250px",
                         height: "250px",
-                        objectFit: "cover",
+                        objectFit: "fill",
                     }}
                 />
                 <div
@@ -157,7 +159,7 @@ function CardDetails() {
                     }}
                 >
                     <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                        ₹{Math.round(cardData.maxPrice - cardData.maxPrice / cardData.discount)}
+                        ₹{Math.round(cardData.maxPrice - ((cardData.discount / 100) * cardData.maxPrice).toFixed(2))}
                     </span>
                     <span
                         style={{
@@ -274,6 +276,8 @@ function CardDetails() {
                             cursor: "pointer",
                             transition: "background-color 0.3s ease",
                         }}
+
+                        onClick={() => {navigate('/cart') }}
                     >
                         ADD TO CART
                     </button>

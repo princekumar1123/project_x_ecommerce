@@ -25,8 +25,8 @@ const Footer = () => {
                     <div className="footer-section">
                         <h3>Get In Touch</h3>
                         <p>
-                            <i className="fas fa-map-marker-alt"></i> 811, Gala Empire, Opp.
-                            Durdarshan Tower, Thaltej, Ahmedabad-380054
+                            <i className="fas fa-map-marker-alt"></i> 23, krishnapuram, karumathampatti main road.
+                            Somanur, Coimbatore - 641668.
                         </p>
                         <p>
                             <i className="fas fa-envelope"></i> princekumar.bc1197@gmail.com

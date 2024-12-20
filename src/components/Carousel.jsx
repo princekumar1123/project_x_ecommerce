@@ -8,37 +8,37 @@ function SingleCarousel() {
             <Carousel.Item>
                 <img
                     className="d-block w-100"
-                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
-                    src={`https://picsum.photos/200/300?grayscale`}
+                    style={{ height: 'calc(70vh - 56px)', objectFit: 'cover' }}
+                    src={`shoppingimg.jpg`}
                     alt="First slide"
                 />
                 <Carousel.Caption>
-                    <h5>First slide label</h5>
-                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                    <h5 style={{ color: "white" }}>New Arrivals Just Landed</h5>
+                    <p style={{ color: "white" }}>Explore the latest trends in fashion, electronics, and more.</p>
                 </Carousel.Caption>
             </Carousel.Item>
             <Carousel.Item>
                 <img
                     className="d-block w-100"
-                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
-                    src="https://picsum.photos/1920/1080?grayscale"
+                    style={{ height: 'calc(70vh - 56px)', objectFit: 'cover' }}
+                    src="shoppingimg2.jpg"
                     alt="Second slide"
                 />
                 <Carousel.Caption>
-                    <h5>Second slide label</h5>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <h5 style={{ color: "white" }}>Hot Deals on Trendy Items</h5>
+                    <p style={{ color: "white" }}>Shop now and save big on your favorite brands.</p>
                 </Carousel.Caption>
             </Carousel.Item>
             <Carousel.Item>
                 <img
                     className="d-block w-100"
-                    style={{ height: 'calc(70vh - 56px)', objectFit: 'fill' }}
-                    src="https://picsum.photos/seed/picsum/1920/1080"
+                    style={{ height: 'calc(70vh - 76px)', objectFit: 'cover' }}
+                    src="shoppingimg3.jpg"
                     alt="Third slide"
                 />
                 <Carousel.Caption>
-                    <h5>Third slide label</h5>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                    <h5 style={{ color: "white" }}>Exclusive Products Await You</h5>
+                    <p style={{ color: "white" }}>Discover unique items you won't find anywhere else!</p>
                 </Carousel.Caption>
             </Carousel.Item>
         </Carousel>

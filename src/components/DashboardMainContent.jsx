@@ -1,4 +1,4 @@
-import { Divider } from "antd";
+import { Divider, Spin } from "antd";
 import ResponsiveCarousel from "./MultiCarousel";
 import SingleCarousel from "./Carousel";
 import { useNavigate } from "react-router-dom";
@@ -34,21 +34,56 @@ function DashboardMainContent() {
             <div style={{ position: "relative", width: "100%" }}>
                 <SingleCarousel />
             </div>
-            {categories.map((category, index) => (
-                <div key={index}>
-                    <h1
-                        style={{ textAlign: "center", margin: "20px 0", fontFamily: "cursive", cursor: "pointer" }}
-                        onClick={() => navigate("/category", { state: { category } })}
-                    >
-                        {category}
-                    </h1>
-                    {/* index % 2 === 0 */}
-                    <ResponsiveCarousel data={allData.filter((item) => item.category === category)} dir={false} />
-                    <div style={{ margin: "0 auto", width: "80%", marginTop: "4%" }}>
-                        <Divider style={{ borderColor: "#1A3757" }}>exclusive {category}</Divider>
-                    </div>
+
+            {allData.length === 0 ? (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "40vh",
+                        fontSize: "1.5rem",
+                        color: "#555",
+                    }}
+                >
+                    <Spin size="large" />
                 </div>
-            ))}
+            ) : (
+                categories.map((category, index) => (
+                    <div key={index}>
+                        <h1
+                            style={{
+                                textAlign: "center",
+                                margin: "20px 0",
+                                fontFamily: "cursive",
+                                cursor: "pointer",
+                            }}
+                            onClick={() =>
+                                navigate("/category", { state: { category } })
+                            }
+                        >
+                            {category}
+                        </h1>
+                        <ResponsiveCarousel
+                            data={allData.filter(
+                                (item) => item.category === category
+                            )}
+                            dir={false}
+                        />
+                        <div
+                            style={{
+                                margin: "0 auto",
+                                width: "80%",
+                                marginTop: "4%",
+                            }}
+                        >
+                            <Divider style={{ borderColor: "#1A3757" }}>
+                                exclusive {category}
+                            </Divider>
+                        </div>
+                    </div>
+                ))
+            )}
         </>
     );
 }

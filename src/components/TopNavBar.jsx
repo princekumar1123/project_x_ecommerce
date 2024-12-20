@@ -20,7 +20,7 @@ const TopNavBar = () => {
                 }}>
                 <div  style={{ display: "flex", alignItems: "center" }}>
                     <img src="e-logo.png" alt="Logo" className='icon' style={{ marginRight: "10px", cursor: "pointer" }} onClick={() => navigate("/")} />
-                    <span className='titleText' style={{ fontWeight: "bold", fontFamily: "cursive" }}>Prince Shopping</span>
+                    <span className='titleText' style={{ fontWeight: "bold", fontFamily: "cursive" }}>Prince Metal Mart</span>
                 </div>
                 <div >
                     {/* <LogoutOutlined style={{ cursor: "pointer", fontSize: "20px", fontWeight: "bold" }} onClick={() => navigate("/newproduct")} /> */}

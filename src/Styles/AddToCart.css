@@ -1,0 +1,149 @@
+/* Cart Container */
+.cart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: "Arial, sans-serif";
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  /* Cart Items */
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+  }
+  
+  .cart-item:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Item Image */
+  .cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Item Details */
+  .cart-item-details {
+    flex: 1;
+    margin-left: 15px;
+  }
+  
+  .cart-item-details h4 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .cart-item-details .seller {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .cart-item-details .price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #008000;
+    margin-top: 5px;
+  }
+  
+  .cart-item-details .offers {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+  }
+  
+  /* Remove Button */
+  .remove-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .remove-btn:hover {
+    background: #e60000;
+  }
+  
+  /* Price Details */
+  .cart-item-price-details {
+    text-align: right;
+  }
+  
+  .cart-item-price-details .original-price span {
+    text-decoration: line-through;
+    color: #888;
+  }
+  
+  .cart-item-price-details .discount {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Price Summary Section */
+  .price-details {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .price-details h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .price-details p {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .price-details .final-amount {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #008000;
+    font-weight: bold;
+  }
+  
+  /* Place Order Button */
+  .place-order-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background: #ff9900;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .place-order-btn:hover {
+    background: #cc7a00;
+  }
+  

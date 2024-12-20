@@ -54,8 +54,8 @@ function ResponsiveCarousel({ data, dir }) {
                         image={item.image[0]}
                         rating={item.rating}
                         reviews={item.review.length}
-                        price={item.maxPrice}
-                        originalPrice={item.maxPrice + (item.maxPrice * item.discount) / 100}
+                        price={Math.round(item.maxPrice - ((item.discount / 100) * item.maxPrice).toFixed(2))}
+                        originalPrice={item.maxPrice}
                         discount={item.discount}
                     />
                 </div>

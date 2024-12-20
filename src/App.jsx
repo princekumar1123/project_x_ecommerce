@@ -7,6 +7,7 @@ import DashBoard from './pages/DashBoad';
 import CardDetails from './pages/CardDetails';
 import AddProduct from './pages/AddProduct';
 import InfiniteScroll from './components/InfinityScroll';
+import AddToCart from './pages/AddTocart';
 
 function App() {
 
@@ -39,6 +40,8 @@ function App() {
           <Route path='detail' element={<CardDetails />} />
           <Route path='newproduct' element={<AddProduct />} />
           <Route path='infi' element={<InfiniteScroll />} />
+          <Route path='cart' element={<AddToCart />} />
+
 
         </Route>
         <Route path='/credential' element={<Credential />} />
