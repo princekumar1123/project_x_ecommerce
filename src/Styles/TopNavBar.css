@@ -1,45 +1,150 @@
-@media (max-width: 767px) {
+/* TopNavBar.css */
+
+/* Importing Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Apply the font family globally */
+body, .top-nav-bar, .nav-container, .nav-left, .nav-right, .menu-item {
+    font-family: 'Roboto', sans-serif; /* Apply Roboto font to all components */
+}
+
+.top-nav-bar {
+    width: 100vw;
+    background-color: #2196F3; /* Vibrant blue background */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    padding: 0 20px;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.icon {
+    height: 50px;
+    margin-right: 10px;
+    transition: transform 0.2s;
+}
+
+.icon:hover {
+    transform: scale(1.1); /* Small animation for logo */
+}
+
+.title-text {
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif; /* Specific font for title */
+    font-size: 1.5rem;
+    color: #fff; /* White text for contrast */
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.user-name {
+    margin-right: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-icon {
+    cursor: pointer;
+    font-size: 26px;
+    margin-right: 15px;
+    color: #fff;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.nav-icon:hover {
+    transform: scale(1.2);
+    color: #FFEB3B; /* Change color to yellow on hover */
+}
+
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: flex;
+}
+
+.mobile-menu {
+    display: flex;
+    flex-direction: column;
+    background-color: #9ebdf7; /* Yellow background for mobile menu */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s ease-in-out;
+}
+
+.menu-item:hover {
+    background-color: #FFC107; /* Darker yellow for hover effect */
+    color: #333;
+}
+
+.menu-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .title-text {
+        font-size: 1.2rem;
+    }
+
     .icon {
-        width: 65px;
-        height: 65px;
+        height: 40px;
     }
 
-    .addIcon {
-        font-size: 20px
+    .mobile-only {
+        display: block;
     }
 
-    .titleText {
-        font-size: 17px;
+    .desktop-only {
+        display: none;
     }
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
+@media (max-width: 480px) {
+    .title-text {
+        font-size: 1rem;
+    }
+
     .icon {
-        width: 75px;
-        height: 75px;
+        height: 30px;
     }
 
-    .addIcon {
-        font-size: 25px
+    .nav-icon {
+        font-size: 22px;
+        margin-right: 10px;
     }
 
-    .titleText {
-        font-size: 24px;
-    }
-
-}
-
-@media (min-width: 1025px) {
-    .icon {
-        width: 85px;
-        height: 85px;
-    }
-
-    .addIcon {
-        font-size: 25px
-    }
-
-    .titleText {
-        font-size: 28px;
+    .menu-item span {
+        font-size: 1rem; /* Adjust font size for mobile */
     }
 }

@@ -21,7 +21,8 @@ function CategoriesList() {
     useEffect(() => {
         window.scrollTo(0, 0);
         axios
-            .get("https://prince-shoppify-server.onrender.com/ecommerce/getproducts", {
+            // .get("https://prince-shoppify-server.onrender.com/ecommerce/getproducts", {
+                .get(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/getproducts`, {
                 headers,
             })
             .then((response) => {

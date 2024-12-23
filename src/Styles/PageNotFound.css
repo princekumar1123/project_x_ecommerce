@@ -1,0 +1,114 @@
+/* 404Page.css */
+
+.not-found-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #9b4d96, #6a1b9a); /* Gradient purple */
+    padding: 0 20px;
+    font-family: 'Roboto', sans-serif;
+    color: #fff; /* White text for contrast */
+}
+
+.not-found-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    text-align: left;
+    max-width: 50%;
+}
+
+.not-found-title {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #fff; /* White text color */
+    margin: 0;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.not-found-message {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: #f2f2f2; /* Slightly off-white for message */
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.go-home-button {
+    background-color: #fff; /* White button */
+    color: #9b4d96; /* Purple text color */
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.go-home-button:hover {
+    background-color: #9b4d96; /* Purple on hover */
+    color: #fff; /* White text on hover */
+}
+
+.not-found-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.not-found-image img {
+    width: 70%;
+    max-width: 400px;
+    animation: slideIn 2s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .not-found-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .not-found-content {
+        max-width: 100%;
+    }
+
+    .not-found-title {
+        font-size: 4rem;
+    }
+
+    .go-home-button {
+        font-size: 1.2rem;
+        padding: 12px 24px;
+    }
+
+    .not-found-image img {
+        width: 80%;
+        max-width: 350px;
+    }
+}

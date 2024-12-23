@@ -372,7 +372,9 @@ const AddProduct = () => {
      
         // axios.post('http://192.168.1.120:9000/ecommerce/addproduct', payload, {
             // axios.post('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/addproduct', payload, {
-            axios.post('https://prince-shoppify-server.onrender.com/ecommerce/addproduct', payload, {
+            // axios.post('https://prince-shoppify-server.onrender.com/ecommerce/addproduct', payload, {
+                axios.post(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/addproduct`, payload, {
+
 
             headers: { 'Content-Type': 'application/json' ,"ngrok-skip-browser-warning": "true"},
         });

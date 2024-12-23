@@ -29,6 +29,8 @@ function CardDetails() {
         // axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
         // axios.get('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/getproducts', { headers }).then((response) => {
         axios.get(`https://prince-shoppify-server.onrender.com/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
+        // axios.get(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
+
 
 
             console.log("res", response.data);

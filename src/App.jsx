@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Credential from './pages/credential';
 import CategoriesList from './pages/CategoriesList';
 import DashboardMainContent from './components/DashboardMainContent';
@@ -8,9 +8,11 @@ import CardDetails from './pages/CardDetails';
 import AddProduct from './pages/AddProduct';
 import InfiniteScroll from './components/InfinityScroll';
 import AddToCart from './pages/AddTocart';
+import PageNotFound from './pages/PageNotFound';
+import { useEffect } from 'react';
 
 function App() {
-
+  const navigate = useNavigate()
   // const product = {
   //           title: "Egate i9 Projector",
   //           quantity: 323,
@@ -31,6 +33,11 @@ function App() {
   //           sellerName: "Flipkart Seller",
   //           colors: ["#ffe5e5", "#872c2c", "#635a5a", "#ab0707"],
   //       };
+  useEffect(() => {
+    if (!localStorage.getItem("token") && window.location.pathname==='/cart') {
+      navigate('/credential')
+    }
+  }, [navigate])
   return (
     <>
       <Routes>
@@ -40,9 +47,8 @@ function App() {
           <Route path='detail' element={<CardDetails />} />
           <Route path='newproduct' element={<AddProduct />} />
           <Route path='infi' element={<InfiniteScroll />} />
-          <Route path='cart' element={<AddToCart />} />
-
-
+          {localStorage.getItem("token") && <Route path='cart' element={<AddToCart />} />}
+          <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path='/credential' element={<Credential />} />
       </Routes>
