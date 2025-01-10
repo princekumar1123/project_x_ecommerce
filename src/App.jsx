@@ -47,7 +47,7 @@ function App() {
           <Route path='detail' element={<CardDetails />} />
           <Route path='newproduct' element={<AddProduct />} />
           <Route path='infi' element={<InfiniteScroll />} />
-          {localStorage.getItem("token") && <Route path='cart' element={<AddToCart />} />}
+          {localStorage.getItem("token") && <Route path='cart/:id' element={<AddToCart />} />}
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path='/credential' element={<Credential />} />

@@ -41,6 +41,7 @@ function CardDetails() {
         });
     }, []);
 
+
     const handleImageClick = (image) => {
         setMainImage(image);
     };
@@ -263,7 +264,7 @@ function CardDetails() {
                     style={{
                         display: "flex",
                         gap: "1rem",
-                        marginTop: "1rem",
+                        marginTop: "1rem"
                     }}
                 >
                     <button
@@ -279,7 +280,7 @@ function CardDetails() {
                             transition: "background-color 0.3s ease",
                         }}
 
-                        onClick={() => {navigate('/cart') }}
+                        onClick={() => {navigate(`/cart/${cardData._id}`) }}
                     >
                         ADD TO CART
                     </button>
