@@ -173,7 +173,7 @@
 import React, { useState, useEffect } from 'react';
 import { LogoutOutlined, PlusCircleOutlined, MenuOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import '../Styles/TopNavBar.css'; // Updated CSS for mobile responsiveness and color animations.
+import '../Styles/TopNavBar.css';
 
 const TopNavBar = () => {
     const navigate = useNavigate();
@@ -190,13 +190,10 @@ const TopNavBar = () => {
     return (
         <div className="top-nav-bar">
             <div className="nav-container">
-                {/* Logo and title */}
                 <div className="nav-left" onClick={() => navigate("/")}>
                     <img src="e-logo.png" alt="Logo" className="icon" />
                     <span className="title-text">Prince Metal Mart</span>
                 </div>
-
-                {/* User controls for desktop */}
                 <div className="nav-right desktop-only">
                     <span style={{marginRight:"10px"}}>Welcome</span> 
                     <span className="user-name">{userName}</span>
@@ -206,7 +203,6 @@ const TopNavBar = () => {
                             localStorage.removeItem('token');
                             localStorage.removeItem('id');
                             localStorage.removeItem('name');
-
                             navigate("/credential");
                         }} 
                     />
@@ -218,15 +214,11 @@ const TopNavBar = () => {
                         }} 
                     />
                 </div>
-
-                {/* Hamburger menu for mobile */}
                 <MenuOutlined 
                     className="nav-icon mobile-only hamburger-icon" 
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
                 />
             </div>
-
-            {/* Mobile menu */}
             {isMobileMenuOpen && (
                 <div className="mobile-menu">
                     <div className="menu-item" onClick={() => navigate("/newproduct")}>
