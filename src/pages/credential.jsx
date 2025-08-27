@@ -5,7 +5,7 @@ import { notification } from 'antd';
 import credential from '../Styles/Credential.css'
 
 
-const Credential = () => {
+const Credential = ({ handleClose }) => {
     const navigate = useNavigate();
 
     const [signupData, setSignupData] = useState({
@@ -68,21 +68,22 @@ const Credential = () => {
         console.log('Login Data:', loginData);
         try {
             const result = await axios.post('https://prince-shoppify-server.onrender.com/user/login', loginData);
-            if (result.status === 200) {
+            if (result.data.status) {
                 openNotification("Login Successfull", "You have successfully login..!");
                 setIsLoginVisible(true);
                 setLoginData({
                     email: '',
                     password: '',
                 });
-
                 localStorage.setItem("token", JSON.stringify(result.data.token))
                 localStorage.setItem("id", JSON.stringify(result.data.id))
                 localStorage.setItem("name", JSON.stringify(result.data.name))
-
+                handleClose();
                 setTimeout(() => {
                     navigate('/')
                 }, 1000);
+            } else {
+                openNotification("Login Failed", "You login has been failed..!");
             }
         } catch (error) {
             console.error("Login failed:", error);

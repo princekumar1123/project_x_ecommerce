@@ -3,16 +3,17 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Flex, Spin } from 'antd';
+import { Flex, Spin, Modal } from 'antd';
+import Credential from "./credential";
 
 
 function CardDetails() {
     const [cardData, setCardData] = useState(null);
     const [mainImage, setMainImage] = useState(null);
-
-
     const { state } = useLocation();
     const { id } = state;
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     console.log("id", id);
 
@@ -29,18 +30,21 @@ function CardDetails() {
         // axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
         // axios.get('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/getproducts', { headers }).then((response) => {
         axios.get(`https://prince-shoppify-server.onrender.com/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
-        // axios.get(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
-
-
-
-            console.log("res", response.data);
+            // axios.get(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
             const fetchedData = response.data;
             setCardData(fetchedData);
-            setMainImage(fetchedData.image[0]); // Set the main image after fetching
+            setMainImage(fetchedData.image[0]);
             window.scrollTo(0, 0)
         });
     }, []);
 
+    const showLoading = () => {
+        setOpen(true);
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    };
 
     const handleImageClick = (image) => {
         setMainImage(image);
@@ -58,9 +62,7 @@ function CardDetails() {
                     color: "#555",
                 }}
             >
-
                 <Spin size="large" />
-
             </div>
         );
     }
@@ -82,6 +84,13 @@ function CardDetails() {
                 animation: "fadeIn 1s ease-in-out",
             }}
         >
+            <Modal
+                footer={null}
+                open={open}
+                onCancel={() => setOpen(false)}
+            >
+                <Credential></Credential>
+            </Modal>
             <div
                 style={{
                     flex: "1 1 300px",
@@ -280,7 +289,7 @@ function CardDetails() {
                             transition: "background-color 0.3s ease",
                         }}
 
-                        onClick={() => {navigate(`/cart/${cardData._id}`) }}
+                        onClick={() => { localStorage.getItem("token") ? navigate(`/cart/${cardData._id}`) : showLoading() }}
                     >
                         ADD TO CART
                     </button>

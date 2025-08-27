@@ -32,34 +32,30 @@ const Footer = () => {
                             <i className="fas fa-envelope"></i> princekumar.bc1197@gmail.com
                         </p>
                         <p>
-                            <i className="fas fa-phone"></i> +91-8220016466
+                            <i className="fas fa-phone"></i> +91 82200 16466
                         </p>
                     </div>
                     <div className="footer-section">
                         <h3>Quick Links</h3>
                         <ul>
                             <li>Overview</li>
-                            <li>Career</li>
                             <li>Contact</li>
-                            <li>Hire Now</li>
                         </ul>
                     </div>
                     <div className="footer-section">
-                        <h3>Company Services</h3>
+                        <h3>Shop Services</h3>
                         <ul>
-                            <li>Web Development</li>
-                            <li>UI/UX Design</li>
-                            <li>Mobile Development</li>
-                            <li>ECommerce Web Development</li>
-                            <li>CMS Development</li>
-                            <li>Remote Hiring</li>
+                            <li>Metal Scrap Recycling</li>
+                            <li>Plastic Scrap Recycling</li>
+                            <li>Rubber Scrap Recycling</li>
+                            <li>Wire Scrap Recycling</li>
                         </ul>
                     </div>
                 </div>
                 <div className="footer-bottom">
                     <p>
-                        &copy; Copyright 2024 All Rights Reserved by{" "}
-                        <b>X Technology Pvt Ltd</b>
+                        &copy; Copyright 2025 All Rights Reserved by{" "}
+                        <b>Prince Metal Mart</b>
                     </p>
                 </div>
             </footer>
