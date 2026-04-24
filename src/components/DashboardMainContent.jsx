@@ -3,31 +3,36 @@ import ResponsiveCarousel from "./MultiCarousel";
 import SingleCarousel from "./Carousel";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 
 function DashboardMainContent() {
     const [allData, setAllData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const headers = {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-    };
-
     useEffect(() => {
-        axios
-            .get("https://prince-shoppify-server.onrender.com/ecommerce/getproducts", {
-                headers,
-            })
+        axiosInstance
+            .get("/ecommerce/getproducts?limit=100")
             .then((response) => {
-                setAllData(response.data);
+                // API now returns { products: [...], total, page, totalPages }
+                const products = response.data.products || response.data;
+                setAllData(products);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
-            });
+            })
+            .finally(() => setLoading(false));
     }, []);
 
     const categories = [...new Set(allData.map((item) => item.category))];
+
+    if (loading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+                <Spin size="large" />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -36,17 +41,8 @@ function DashboardMainContent() {
             </div>
 
             {allData.length === 0 ? (
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "40vh",
-                        fontSize: "1.5rem",
-                        color: "#555",
-                    }}
-                >
-                    <Spin size="large" />
+                <div style={{ textAlign: "center", padding: "4rem", color: "#888", fontSize: "1.2rem" }}>
+                    No products available yet.
                 </div>
             ) : (
                 categories.map((category, index) => (
@@ -58,25 +54,15 @@ function DashboardMainContent() {
                                 fontFamily: "cursive",
                                 cursor: "pointer",
                             }}
-                            onClick={() =>
-                                navigate("/category", { state: { category } })
-                            }
+                            onClick={() => navigate("/category", { state: { category } })}
                         >
                             {category}
                         </h1>
                         <ResponsiveCarousel
-                            data={allData.filter(
-                                (item) => item.category === category
-                            )}
+                            data={allData.filter((item) => item.category === category)}
                             dir={false}
                         />
-                        <div
-                            style={{
-                                margin: "0 auto",
-                                width: "80%",
-                                marginTop: "4%",
-                            }}
-                        >
+                        <div style={{ margin: "0 auto", width: "80%", marginTop: "4%" }}>
                             <Divider style={{ borderColor: "#1A3757" }}>
                                 exclusive {category}
                             </Divider>

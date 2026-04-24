@@ -1,0 +1,118 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE HEADER — back button + title
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    padding: 0;
+}
+
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    flex: 1;
+}
+
+/* ── Back button ─────────────────────────────────────────────────────────── */
+.page-header-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    background: #fff;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 20px;          /* pill shape — friendlier */
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.page-header-back:hover {
+    background: #E3F2FD;
+    border-color: #1976D2;
+    color: #1976D2;
+    transform: translateX(-2px);
+}
+
+.page-header-back:active {
+    transform: translateX(0);
+    background: #BBDEFB;
+}
+
+.page-header-back .anticon {
+    font-size: 0.75rem;
+}
+
+/* ── Titles ──────────────────────────────────────────────────────────────── */
+.page-header-titles {
+    min-width: 0;
+    flex: 1;
+}
+
+.page-header-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #212121;
+    margin: 0;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.page-header-subtitle {
+    font-size: 0.8rem;
+    color: #9E9E9E;
+    margin: 0.15rem 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Right actions ───────────────────────────────────────────────────────── */
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .page-header-title {
+        font-size: 1.1rem;
+    }
+
+    .page-header-back {
+        padding: 0.38rem 0.65rem;
+        font-size: 0;          /* hide text, show only icon */
+        gap: 0;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        justify-content: center;
+    }
+
+    .page-header-back .anticon {
+        font-size: 0.9rem;
+    }
+
+    .page-header-subtitle {
+        display: none;
+    }
+}

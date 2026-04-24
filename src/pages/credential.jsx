@@ -1,42 +1,35 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { notification } from 'antd';
-import credential from '../Styles/Credential.css'
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { notification } from "antd";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/authSlice";
+import axiosInstance from "../api/axiosInstance";
+import "../Styles/Credential.css";
 
 const Credential = ({ handleClose }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [api, contextHolder] = notification.useNotification();
+    const [activeTab, setActiveTab] = useState("login");
+    const [loading, setLoading] = useState(false);
 
     const [signupData, setSignupData] = useState({
-        name: '',
-        email: '',
-        mobile: '',
-        password: '',
-        gender: '',
+        name: "", email: "", mobile: "", password: "", gender: "",
     });
 
     const [loginData, setLoginData] = useState({
-        email: '',
-        password: '',
+        email: "", password: "",
     });
 
-    const [isLoginVisible, setIsLoginVisible] = useState(false);
+    const openNotification = (type, message, description) => {
+        api.open({ type, message, description, duration: 3 });
+    };
 
     const handleSignupChange = (e) => {
         const { name, value } = e.target;
         setSignupData((prev) => ({ ...prev, [name]: value }));
     };
-    const [api, contextHolder] = notification.useNotification();
 
-    const openNotification = (message, description) => {
-        api.open({
-            message,
-            description,
-            type: 'success',
-            duration: 3,
-        });
-    };
     const handleLoginChange = (e) => {
         const { name, value } = e.target;
         setLoginData((prev) => ({ ...prev, [name]: value }));
@@ -44,153 +37,196 @@ const Credential = ({ handleClose }) => {
 
     const handleSignUp = async (e) => {
         e.preventDefault();
-        console.log('Signup Data:', signupData);
+        setLoading(true);
         try {
-            const result = await axios.post('https://prince-shoppify-server.onrender.com/user/register', signupData);
-            if (result.status === 200) {
-                openNotification("Register Successfull", "You have successfully Registered..!");
-                setIsLoginVisible(true);
-                setSignupData({
-                    name: '',
-                    email: '',
-                    mobile: '',
-                    password: '',
-                    gender: '',
-                });
+            const result = await axiosInstance.post("/user/register", signupData);
+            if (result.status === 201) {
+                openNotification("success", "Registered Successfully!", "You can now log in with your credentials.");
+                setActiveTab("login");
+                setSignupData({ name: "", email: "", mobile: "", password: "", gender: "" });
             }
         } catch (error) {
-            console.error("Signup failed:", error);
+            const msg = error.response?.data?.error?.message || error.response?.data?.errors?.[0]?.msg || "Registration failed. Please try again.";
+            openNotification("error", "Registration Failed", msg);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log('Login Data:', loginData);
+        setLoading(true);
         try {
-            const result = await axios.post('https://prince-shoppify-server.onrender.com/user/login', loginData);
+            const result = await axiosInstance.post("/user/login", loginData);
             if (result.data.status) {
-                openNotification("Login Successfull", "You have successfully login..!");
-                setIsLoginVisible(true);
-                setLoginData({
-                    email: '',
-                    password: '',
-                });
-                localStorage.setItem("token", JSON.stringify(result.data.token))
-                localStorage.setItem("id", JSON.stringify(result.data.id))
-                localStorage.setItem("name", JSON.stringify(result.data.name))
-                handleClose();
-                setTimeout(() => {
-                    navigate('/')
-                }, 1000);
+                dispatch(loginSuccess({
+                    token: result.data.token,
+                    id: result.data.id,
+                    name: result.data.name,
+                    role: result.data.role,
+                }));
+                openNotification("success", "Welcome back!", `Logged in as ${result.data.name}`);
+                setLoginData({ email: "", password: "" });
+                if (handleClose) handleClose();
+                setTimeout(() => navigate("/"), 600);
             } else {
-                openNotification("Login Failed", "You login has been failed..!");
+                openNotification("error", "Login Failed", "Invalid email or password.");
             }
         } catch (error) {
-            console.error("Login failed:", error);
+            const msg = error.response?.data?.error?.message || error.response?.data?.errors?.[0]?.msg || "Login failed. Please try again.";
+            openNotification("error", "Login Failed", msg);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="OverAll">
-            <div className="main">
-                <input
-                    className="loginInput"
-                    type="checkbox"
-                    id="chk"
-                    aria-hidden="true"
-                    checked={isLoginVisible}
-                    onChange={() => setIsLoginVisible(!isLoginVisible)}
-                />
-                <div className="signup">
-                    <form onSubmit={handleSignUp}>
-                        <label className="loginLabel" htmlFor="chk" aria-hidden="true">
-                            Sign up
-                        </label>
-                        <input
-                            className="loginInput"
-                            type="text"
-                            name="name"
-                            placeholder="Name"
-                            required
-                            value={signupData.name}
-                            onChange={handleSignupChange}
-                        />
-                        <select
-                            className="loginInput"
-                            name="gender"
-                            value={signupData.gender}
-                            onChange={handleSignupChange}
-                            required
-                        >
-                            <option value="" disabled>
-                                Select Gender
-                            </option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                        <input
-                            className="loginInput"
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            required
-                            value={signupData.email}
-                            onChange={handleSignupChange}
-                        />
-                        <input
-                            className="loginInput"
-                            type="tel"
-                            name="mobile"
-                            placeholder="Mobile"
-                            required
-                            pattern="\d{10}"
-                            value={signupData.mobile}
-                            onChange={handleSignupChange}
-                        />
-                        <input
-                            className="loginInput"
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            required
-                            minLength="6"
-                            value={signupData.password}
-                            onChange={handleSignupChange}
-                        />
-                        <button className="creBtn" type="submit">
-                            Sign up
-                        </button>
-                    </form>
+        <div className="auth-wrapper">
+            {/* Brand panel */}
+            <div className="auth-brand-panel">
+                <img src="e-logo.png" alt="Ecom Shopify" />
+                <h2>Ecom Shopify</h2>
+                <p>Your one-stop shop for everything you need</p>
+            </div>
+
+            {/* Form panel */}
+            <div className="auth-form-panel">
+                {/* Tabs */}
+                <div className="auth-tabs">
+                    <button
+                        className={`auth-tab ${activeTab === "login" ? "active" : ""}`}
+                        onClick={() => setActiveTab("login")}
+                    >
+                        Login
+                    </button>
+                    <button
+                        className={`auth-tab ${activeTab === "signup" ? "active" : ""}`}
+                        onClick={() => setActiveTab("signup")}
+                    >
+                        Sign Up
+                    </button>
                 </div>
 
-                <div className="login">
-                    <form onSubmit={handleLogin}>
-                        <label className="loginLabel" htmlFor="chk" aria-hidden="true">
-                            Login
-                        </label>
-                        <input
-                            className="loginInput"
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            required
-                            value={loginData.email}
-                            onChange={handleLoginChange}
-                        />
-                        <input
-                            className="loginInput"
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            required
-                            value={loginData.password}
-                            onChange={handleLoginChange}
-                        />
-                        <button className="creBtn" type="submit">
-                            Login
-                        </button>
-                    </form>
-                </div>
+                {/* Login form */}
+                {activeTab === "login" && (
+                    <div className="auth-form-body">
+                        <h3>Welcome back</h3>
+                        <form onSubmit={handleLogin}>
+                            <div className="auth-field">
+                                <label>Email</label>
+                                <input
+                                    className="auth-input"
+                                    type="email"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    required
+                                    value={loginData.email}
+                                    onChange={handleLoginChange}
+                                />
+                            </div>
+                            <div className="auth-field">
+                                <label>Password</label>
+                                <input
+                                    className="auth-input"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    required
+                                    value={loginData.password}
+                                    onChange={handleLoginChange}
+                                />
+                            </div>
+                            <button className="auth-submit-btn" type="submit" disabled={loading}>
+                                {loading ? "Logging in..." : "Login"}
+                            </button>
+                        </form>
+                        <div className="auth-switch">
+                            Don't have an account?{" "}
+                            <button onClick={() => setActiveTab("signup")}>Sign up</button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Signup form */}
+                {activeTab === "signup" && (
+                    <div className="auth-form-body">
+                        <h3>Create account</h3>
+                        <form onSubmit={handleSignUp}>
+                            <div className="auth-field">
+                                <label>Full Name</label>
+                                <input
+                                    className="auth-input"
+                                    type="text"
+                                    name="name"
+                                    placeholder="Your full name"
+                                    required
+                                    value={signupData.name}
+                                    onChange={handleSignupChange}
+                                />
+                            </div>
+                            <div className="auth-field">
+                                <label>Email</label>
+                                <input
+                                    className="auth-input"
+                                    type="email"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    required
+                                    value={signupData.email}
+                                    onChange={handleSignupChange}
+                                />
+                            </div>
+                            <div className="auth-field">
+                                <label>Mobile (10 digits)</label>
+                                <input
+                                    className="auth-input"
+                                    type="tel"
+                                    name="mobile"
+                                    placeholder="9876543210"
+                                    required
+                                    pattern="\d{10}"
+                                    value={signupData.mobile}
+                                    onChange={handleSignupChange}
+                                />
+                            </div>
+                            <div className="auth-field">
+                                <label>Gender</label>
+                                <select
+                                    className="auth-select"
+                                    name="gender"
+                                    value={signupData.gender}
+                                    onChange={handleSignupChange}
+                                    required
+                                >
+                                    <option value="" disabled>Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div className="auth-field">
+                                <label>Password</label>
+                                <input
+                                    className="auth-input"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Min. 6 characters"
+                                    required
+                                    minLength="6"
+                                    value={signupData.password}
+                                    onChange={handleSignupChange}
+                                />
+                            </div>
+                            <button className="auth-submit-btn" type="submit" disabled={loading}>
+                                {loading ? "Creating account..." : "Create Account"}
+                            </button>
+                        </form>
+                        <div className="auth-switch">
+                            Already have an account?{" "}
+                            <button onClick={() => setActiveTab("login")}>Login</button>
+                        </div>
+                    </div>
+                )}
             </div>
             {contextHolder}
         </div>

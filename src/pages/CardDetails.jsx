@@ -1,315 +1,249 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { LoadingOutlined } from '@ant-design/icons';
-import { Flex, Spin, Modal } from 'antd';
+import { Spin, Modal, notification } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCartAsync } from "../store/cartSlice";
 import Credential from "./credential";
-
+import axiosInstance from "../api/axiosInstance";
+import PageHeader from "../components/PageHeader";
+import ReviewSection from "../components/ReviewSection";
+import "../Styles/CardDetail.css";
 
 function CardDetails() {
     const [cardData, setCardData] = useState(null);
     const [mainImage, setMainImage] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [addingToCart, setAddingToCart] = useState(false);
+
     const { state } = useLocation();
     const { id } = state;
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isAuthenticated } = useSelector((s) => s.auth);
+    const [api, contextHolder] = notification.useNotification();
 
-    console.log("id", id);
-
-    const navigate = useNavigate()
-
-
-    useEffect(() => {
-        window.scrollTo(0, 0)
-        const headers = {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true"
-        };
-
-        // axios.get('http://192.168.1.120:9000/ecommerce/getproducts').then((response) => {
-        // axios.get('https://d8a1-117-202-0-167.ngrok-free.app/ecommerce/getproducts', { headers }).then((response) => {
-        axios.get(`https://prince-shoppify-server.onrender.com/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
-            // axios.get(`${process.env.ENVIROINMENT_DOMAIN}/ecommerce/getproductbyid/${id}`, { headers }).then((response) => {
-            const fetchedData = response.data;
-            setCardData(fetchedData);
-            setMainImage(fetchedData.image[0]);
-            window.scrollTo(0, 0)
-        });
-    }, []);
-
-    const showLoading = () => {
-        setOpen(true);
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+    const fetchProduct = () => {
+        axiosInstance
+            .get(`/ecommerce/getproductbyid/${id}`)
+            .then((res) => {
+                setCardData(res.data);
+                setMainImage((prev) => prev || res.data.image[0]);
+            })
+            .catch(() => {
+                api.open({ type: "error", message: "Failed to load product", duration: 3 });
+            });
     };
 
-    const handleImageClick = (image) => {
-        setMainImage(image);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        fetchProduct();
+    }, [id]);
+
+    const handleAddToCart = async () => {
+        if (!isAuthenticated) { setOpen(true); return; }
+        setAddingToCart(true);
+        try {
+            await dispatch(addToCartAsync({ productId: cardData._id, quantity: 1 })).unwrap();
+            api.open({ type: "success", message: "Added to cart!", duration: 2 });
+            setTimeout(() => navigate("/cart"), 800);
+        } catch (err) {
+            api.open({ type: "error", message: err || "Failed to add to cart", duration: 3 });
+        } finally {
+            setAddingToCart(false);
+        }
     };
 
     if (!cardData) {
         return (
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                    fontSize: "1.5rem",
-                    color: "#555",
-                }}
-            >
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "70vh" }}>
                 <Spin size="large" />
             </div>
         );
     }
 
+    const finalPrice = Math.round(cardData.maxPrice - (cardData.discount / 100) * cardData.maxPrice);
+    const saving = cardData.maxPrice - finalPrice;
+
     return (
-        <div
-            style={{
-                fontFamily: "Arial, sans-serif",
-                color: "#333",
-                maxWidth: "1200px",
-                margin: "2rem auto",
-                border: "1px solid #e0e0e0",
-                borderRadius: "12px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                display: "flex",
-                flexWrap: "wrap",
-                padding: "1rem",
-                backgroundColor: "#fff",
-                animation: "fadeIn 1s ease-in-out",
-            }}
-        >
-            <Modal
-                footer={null}
-                open={open}
-                onCancel={() => setOpen(false)}
-            >
-                <Credential></Credential>
+        <div className="detail-page">
+            {contextHolder}
+            <Modal footer={null} open={open} onCancel={() => setOpen(false)} width={560}>
+                <Credential handleClose={() => setOpen(false)} />
             </Modal>
-            <div
-                style={{
-                    flex: "1 1 300px",
-                    justifyContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    padding: "1rem",
-                }}
-            >
-                <img
-                    src={mainImage || "placeholder.jpg"}
-                    alt="Product"
-                    className="mainImage"
-                    style={{
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                        marginBottom: "1rem",
-                        width: "250px",
-                        height: "250px",
-                        objectFit: "fill",
-                    }}
-                />
-                <div
-                    className="multiImage"
-                    style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: "0.5rem",
-                        justifyContent: "center",
-                    }}
-                >
-                    {cardData.image.map((img, index) => (
-                        <img
-                            key={index}
-                            src={img}
-                            alt={`Thumbnail ${index + 1}`}
-                            style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                border: mainImage === img ? "2px solid #5385EA" : "1px solid #ccc",
-                            }}
-                            onClick={() => handleImageClick(img)}
-                        />
-                    ))}
-                </div>
-            </div>
 
-            <div
-                style={{
-                    flex: "1 1 400px",
-                    padding: "1rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                }}
-            >
-                <h1
-                    style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        margin: "0",
-                        color: "#444",
-                    }}
-                >
-                    {cardData.title}
-                </h1>
+            <PageHeader title="Product Details" backLabel="Back to Shopping" />
 
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1rem",
-                        margin: "0.5rem 0",
-                        flexWrap: "wrap",
-                    }}
-                >
-                    <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                        ₹{Math.round(cardData.maxPrice - ((cardData.discount / 100) * cardData.maxPrice).toFixed(2))}
-                    </span>
-                    <span
-                        style={{
-                            textDecoration: "line-through",
-                            color: "#888",
-                        }}
-                    >
-                        ₹{cardData.maxPrice}
-                    </span>
-                    <span
-                        style={{
-                            color: "#d32f2f",
-                            fontWeight: "bold",
-                        }}
-                    >
-                        {cardData.discount}% off
-                    </span>
-                </div>
-
-                <p
-                    style={{
-                        fontSize: "1rem",
-                        margin: "0",
-                        color: "#555",
-                    }}
-                >
-                    {cardData.description}
-                </p>
-
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        margin: "1rem 0",
-                    }}
-                >
-                    {[...Array(5)].map((_, index) => (
-                        <span
-                            key={index}
-                            style={{
-                                color: index < cardData.rating ? "#ffb400" : "#ccc",
-                                fontSize: "1.2rem",
-                            }}
-                        >
-                            ★
-                        </span>
-                    ))}
-                    <span style={{ fontSize: "1rem", color: "#555" }}>
-                        ({cardData.rating})
-                    </span>
-                </div>
-
-                <div style={{ margin: "1rem 0" }}>
-                    <h3
-                        style={{
-                            fontSize: "1rem",
-                            color: "#00796b",
-                            margin: "0",
-                        }}
-                    >
-                        Available Offers:
-                    </h3>
-                    <ul
-                        style={{
-                            fontSize: "0.9rem",
-                            margin: "0.5rem 0 0 1rem",
-                            color: "#444",
-                        }}
-                    >
-                        {cardData.offers.map((offer, index) => (
-                            <li key={index}>{offer}</li>
+            <div className="detail-card">
+                {/* ── Image section ── */}
+                <div className="detail-image-section">
+                    <img src={mainImage} alt={cardData.title} className="detail-main-image" />
+                    <div className="detail-thumbnails">
+                        {cardData.image.map((img, i) => (
+                            <img
+                                key={i}
+                                src={img}
+                                alt={`View ${i + 1}`}
+                                className={`detail-thumb ${mainImage === img ? "active" : ""}`}
+                                onClick={() => setMainImage(img)}
+                            />
                         ))}
-                    </ul>
+                    </div>
                 </div>
 
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        margin: "1rem 0",
-                    }}
-                >
-                    {cardData.colors.map((color, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                width: "20px",
-                                height: "20px",
-                                borderRadius: "50%",
-                                backgroundColor: color,
-                                border: "1px solid #ccc",
-                            }}
-                        ></div>
-                    ))}
-                </div>
+                {/* ── Info section ── */}
+                <div className="detail-info-section">
+                    {cardData.category && (
+                        <span className="detail-category-badge">{cardData.category}</span>
+                    )}
 
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "1rem",
-                        marginTop: "1rem"
-                    }}
-                >
-                    <button
-                        style={{
-                            flex: "1",
-                            backgroundColor: "#ff9f00",
-                            border: "none",
-                            color: "white",
-                            fontSize: "1rem",
-                            padding: "0.7rem 1rem",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                            transition: "background-color 0.3s ease",
-                        }}
+                    {cardData.brand && (
+                        <p className="detail-brand">by <strong>{cardData.brand}</strong></p>
+                    )}
 
-                        onClick={() => { localStorage.getItem("token") ? navigate(`/cart/${cardData._id}`) : showLoading() }}
-                    >
-                        ADD TO CART
-                    </button>
-                    <button
-                        style={{
-                            flex: "1",
-                            backgroundColor: "#fb641b",
-                            border: "none",
-                            color: "white",
-                            fontSize: "1rem",
-                            padding: "0.7rem 1rem",
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                            transition: "background-color 0.3s ease",
-                        }}
-                    >
-                        BUY NOW
-                    </button>
+                    <h1 className="detail-title">{cardData.title}</h1>
+
+                    {/* Rating — now live from reviews */}
+                    <div className="detail-rating-row">
+                        <div className="detail-stars">
+                            {[...Array(5)].map((_, i) => (
+                                <span key={i} className={`detail-star ${i < Math.round(cardData.rating) ? "filled" : ""}`}>★</span>
+                            ))}
+                        </div>
+                        <span className="detail-rating-value">{cardData.rating > 0 ? cardData.rating.toFixed(1) : "No ratings"}</span>
+                        <a
+                            href="#reviews-section"
+                            className="detail-review-count"
+                            style={{ color: "#1976D2", textDecoration: "none", cursor: "pointer" }}
+                        >
+                            ({cardData.reviewCount || 0} review{cardData.reviewCount !== 1 ? "s" : ""})
+                        </a>
+                    </div>
+
+                    {/* Price */}
+                    <div className="detail-price-block">
+                        <span className="detail-final-price">₹{finalPrice.toLocaleString("en-IN")}</span>
+                        <span className="detail-mrp">₹{cardData.maxPrice.toLocaleString("en-IN")}</span>
+                        <span className="detail-discount-badge">{cardData.discount}% OFF</span>
+                        <span className="detail-saving-text">You save ₹{saving.toLocaleString("en-IN")} on this product</span>
+                    </div>
+
+                    {/* Stock status */}
+                    {cardData.stockStatus && (
+                        <p className={`detail-stock-status ${cardData.stockStatus}`}>
+                            {cardData.stockStatus === "in_stock" && "✓ In Stock"}
+                            {cardData.stockStatus === "limited" && "⚠ Only a few left in stock"}
+                            {cardData.stockStatus === "out_of_stock" && "✗ Out of Stock"}
+                        </p>
+                    )}
+
+                    {/* Description */}
+                    <p className="detail-description">{cardData.description}</p>
+
+                    {/* Key Highlights */}
+                    {cardData.highlights?.length > 0 && (
+                        <div>
+                            <p className="detail-offers-title">Key Features</p>
+                            <ul className="detail-highlights-list">
+                                {cardData.highlights.map((h, i) => (
+                                    <li key={i} className="detail-highlight-item">{h}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* Offers */}
+                    {cardData.offers?.length > 0 && (
+                        <div>
+                            <p className="detail-offers-title">Available Offers</p>
+                            <ul className="detail-offers-list">
+                                {cardData.offers.map((offer, i) => (
+                                    <li key={i} className="detail-offer-item">{offer}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* Colors */}
+                    {cardData.colors?.length > 0 && (
+                        <div>
+                            <p className="detail-colors-title">Color Options</p>
+                            <div className="detail-colors-row">
+                                {cardData.colors.map((color, i) => (
+                                    <div key={i} className="detail-color-dot" style={{ backgroundColor: color }} title={color} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Seller */}
+                    <p className="detail-seller">Sold by: <strong>{cardData.sellerName}</strong></p>
+
+                    {/* Delivery & Returns */}
+                    <div className="detail-meta-row">
+                        {cardData.deliveryInfo && (
+                            <div className="detail-meta-item">
+                                <span className="detail-meta-icon">🚚</span>
+                                <span>{cardData.deliveryInfo}</span>
+                            </div>
+                        )}
+                        {cardData.returnPolicy && (
+                            <div className="detail-meta-item">
+                                <span className="detail-meta-icon">↩</span>
+                                <span>{cardData.returnPolicy}</span>
+                            </div>
+                        )}
+                        {cardData.warranty && (
+                            <div className="detail-meta-item">
+                                <span className="detail-meta-icon">🛡</span>
+                                <span>{cardData.warranty}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="detail-actions">
+                        <button
+                            className="btn-add-to-cart"
+                            onClick={handleAddToCart}
+                            disabled={addingToCart || cardData.stockStatus === "out_of_stock"}
+                        >
+                            {addingToCart ? "Adding..." : "🛒 ADD TO CART"}
+                        </button>
+                        <button
+                            className="btn-buy-now"
+                            onClick={handleAddToCart}
+                            disabled={addingToCart || cardData.stockStatus === "out_of_stock"}
+                        >
+                            ⚡ BUY NOW
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            {/* ── Product Information Table ── */}
+            {(cardData.inTheBox || cardData.weight || cardData.dimensions || cardData.countryOfOrigin || cardData.brand) && (
+                <div className="detail-info-table-card">
+                    <h2 className="detail-section-heading">Product Information</h2>
+                    <table className="detail-info-table">
+                        <tbody>
+                            {cardData.brand && <tr><td>Brand</td><td>{cardData.brand}</td></tr>}
+                            {cardData.countryOfOrigin && <tr><td>Country of Origin</td><td>{cardData.countryOfOrigin}</td></tr>}
+                            {cardData.weight && <tr><td>Item Weight</td><td>{cardData.weight}</td></tr>}
+                            {cardData.dimensions && <tr><td>Dimensions</td><td>{cardData.dimensions}</td></tr>}
+                            {cardData.inTheBox && <tr><td>In The Box</td><td>{cardData.inTheBox}</td></tr>}
+                            {cardData.sellerName && <tr><td>Sold By</td><td>{cardData.sellerName}</td></tr>}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {/* ── Reviews ── */}
+            <ReviewSection
+                productId={cardData._id}
+                productRating={cardData.rating}
+                reviewCount={cardData.reviewCount || 0}
+                onReviewChange={fetchProduct}
+            />
         </div>
     );
 }
