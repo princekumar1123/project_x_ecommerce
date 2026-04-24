@@ -84,8 +84,8 @@ const Credential = ({ handleClose }) => {
         <div className="auth-wrapper">
             {/* Brand panel */}
             <div className="auth-brand-panel">
-                <img src="e-logo.png" alt="Ecom Shopify" />
-                <h2>Ecom Shopify</h2>
+                <img src="e-logo.png" alt="Prince Shopify" />
+                <h2>Prince Shopify</h2>
                 <p>Your one-stop shop for everything you need</p>
             </div>
 

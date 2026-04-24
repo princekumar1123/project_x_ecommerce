@@ -42,7 +42,7 @@ const useRazorpay = () => {
             key: options.key,
             amount: options.amount,
             currency: options.currency || "INR",
-            name: options.name || "ECom Shopify",
+            name: options.name || "Prince Shopify",
             description: options.description || "Order Payment",
             image: "/e-logo.png",
             order_id: options.orderId,

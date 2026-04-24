@@ -58,7 +58,7 @@ const TopNavBar = () => {
                 {/* Logo */}
                 <div className="nav-left" onClick={() => navigate("/")}>
                     <img src="e-logo.png" alt="Logo" className="icon" />
-                    <span className="title-text">ECom Shopify</span>
+                    <span className="title-text">Prince Shopify</span>
                 </div>
 
                 {/* Search bar */}

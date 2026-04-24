@@ -54,7 +54,7 @@ const Footer = () => {
                 </div>
                 <div className="footer-bottom">
                     <p>
-                        &copy; Copyright 2025 All Rights Reserved by{" "}
+                        &copy; Copyright 2026 All Rights Reserved by{" "}
                         <b>Prince Metal Mart</b>
                     </p>
                 </div>
