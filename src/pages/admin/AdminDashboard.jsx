@@ -35,11 +35,11 @@ export default function AdminDashboard() {
         // Fetch quick stats
         Promise.all([
             axiosInstance.get("/ecommerce/getproducts?limit=1"),
-            axiosInstance.get("/user/getAllUsers"),
+            axiosInstance.get("/user/getAllUsers?limit=1"),
         ]).then(([prodRes, userRes]) => {
             setStats({
                 products: prodRes.data.total,
-                users: Array.isArray(userRes.data) ? userRes.data.length : null,
+                users: userRes.data.total ?? null,
             });
         }).catch(() => {});
     }, []);
@@ -47,6 +47,7 @@ export default function AdminDashboard() {
     const navItems = [
         { key: "/admin", label: "Overview", icon: <DashboardOutlined /> },
         { key: "/admin/products", label: "Products", icon: <AppstoreOutlined /> },
+        { key: "/admin/users", label: "Users", icon: <UserOutlined /> },
     ];
 
     const isActive = (key) => {
@@ -120,6 +121,9 @@ export default function AdminDashboard() {
                                 <div className="admin-quick-btns">
                                     <button className="admin-quick-btn primary" onClick={() => navigate("/admin/products")}>
                                         <AppstoreOutlined /> Manage Products
+                                    </button>
+                                    <button className="admin-quick-btn" onClick={() => navigate("/admin/users")}>
+                                        <UserOutlined /> Manage Users
                                     </button>
                                     <button className="admin-quick-btn" onClick={() => navigate("/newproduct")}>
                                         <PlusOutlined /> Add New Product

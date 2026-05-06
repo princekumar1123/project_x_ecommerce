@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { LogoutOutlined, PlusCircleOutlined, MenuOutlined, LoginOutlined, UserOutlined, ShoppingCartOutlined, HistoryOutlined, SearchOutlined, DashboardOutlined } from "@ant-design/icons";
+import { useState, useEffect, useRef } from "react";
+import { LogoutOutlined, PlusCircleOutlined, MenuOutlined, LoginOutlined, UserOutlined, ShoppingCartOutlined, HistoryOutlined, SearchOutlined, DashboardOutlined, HeartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Modal, notification, Badge } from "antd";
 import "../Styles/TopNavBar.css";
@@ -7,23 +7,40 @@ import Credential from "../pages/credential";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 import { fetchCart } from "../store/cartSlice";
+import { fetchWishlist } from "../store/wishlistSlice";
+import SearchSuggestions from "./SearchSuggestions";
 
 const TopNavBar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { isAuthenticated, userName, isAdmin } = useSelector((state) => state.auth);
     const cartItems = useSelector((state) => state.cart.items);
+    const wishlistItems = useSelector((state) => state.wishlist.items);
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchWrapRef = useRef(null);
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         if (isAuthenticated) {
             dispatch(fetchCart());
+            dispatch(fetchWishlist());
         }
     }, [isAuthenticated, dispatch]);
+
+    // Close suggestions when clicking outside
+    useEffect(() => {
+        const handler = (e) => {
+            if (searchWrapRef.current && !searchWrapRef.current.contains(e.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
 
     const handleClose = () => setOpen(false);
 
@@ -43,10 +60,20 @@ const TopNavBar = () => {
         if (searchQuery.trim()) {
             navigate(`/category?search=${encodeURIComponent(searchQuery.trim())}`);
             setSearchQuery("");
+            setShowSuggestions(false);
+        }
+    };
+
+    const handleSearchKeyDown = (e) => {
+        // Forward keyboard events to the suggestions dropdown
+        const dropdown = searchWrapRef.current?.querySelector("[data-suggestions]");
+        if (dropdown?._handleKeyDown) {
+            dropdown._handleKeyDown(e);
         }
     };
 
     const cartCount = cartItems?.length || 0;
+    const wishlistCount = wishlistItems?.length || 0;
 
     return (
         <div className="top-nav-bar">
@@ -61,19 +88,37 @@ const TopNavBar = () => {
                     <span className="title-text">Prince Shopify</span>
                 </div>
 
-                {/* Search bar */}
-                <form className="nav-search" onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        className="nav-search-input"
-                        placeholder="Search products..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button type="submit" className="nav-search-btn">
-                        <SearchOutlined />
-                    </button>
-                </form>
+                {/* Search bar with suggestions */}
+                <div ref={searchWrapRef} style={{ position: "relative", flex: 1, maxWidth: 420, margin: "0 0.5rem" }}>
+                    <form className="nav-search" style={{ maxWidth: "100%", margin: 0 }} onSubmit={handleSearch}>
+                        <input
+                            type="text"
+                            className="nav-search-input"
+                            placeholder="Search products..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setShowSuggestions(e.target.value.trim().length > 0);
+                            }}
+                            onFocus={() => {
+                                if (searchQuery.trim()) setShowSuggestions(true);
+                            }}
+                            onKeyDown={handleSearchKeyDown}
+                            autoComplete="off"
+                        />
+                        <button type="submit" className="nav-search-btn">
+                            <SearchOutlined />
+                        </button>
+                    </form>
+                    <div data-suggestions>
+                        <SearchSuggestions
+                            query={searchQuery}
+                            visible={showSuggestions}
+                            onSelect={() => setSearchQuery("")}
+                            onClose={() => setShowSuggestions(false)}
+                        />
+                    </div>
+                </div>
 
                 {/* Desktop nav */}
                 <div className="nav-right desktop-only">
@@ -85,6 +130,11 @@ const TopNavBar = () => {
 
                     {isAuthenticated ? (
                         <>
+                            <div className="nav-icon" onClick={() => navigate("/wishlist")} title="My Wishlist" style={{ cursor: "pointer" }}>
+                                <Badge count={wishlistCount} size="small" offset={[2, 0]}>
+                                    <HeartOutlined style={{ fontSize: "22px", color: "#fff" }} />
+                                </Badge>
+                            </div>
                             <div className="nav-icon" onClick={() => navigate("/cart")} title="My Cart" style={{ cursor: "pointer" }}>
                                 <Badge count={cartCount} size="small" offset={[2, 0]}>
                                     <ShoppingCartOutlined style={{ fontSize: "26px", color: "#fff" }} />
@@ -153,6 +203,10 @@ const TopNavBar = () => {
                                     </div>
                                 </>
                             )}
+                            <div className="menu-item" onClick={() => { navigate("/wishlist"); setIsMobileMenuOpen(false); }}>
+                                <HeartOutlined className="menu-icon" />
+                                <span>My Wishlist {wishlistCount > 0 && `(${wishlistCount})`}</span>
+                            </div>
                             <div className="menu-item" onClick={() => { navigate("/cart"); setIsMobileMenuOpen(false); }}>
                                 <ShoppingCartOutlined className="menu-icon" />
                                 <span>My Cart {cartCount > 0 && `(${cartCount})`}</span>

@@ -9,7 +9,7 @@ function SingleCarousel() {
                 <img
                     className="d-block w-100"
                     style={{ height: 'calc(70vh - 56px)', objectFit: 'cover' }}
-                    src={`shoppingimg.jpg`}
+                    src={`shopping_1.jpg`}
                     alt="First slide"
                 />
                 <Carousel.Caption>
@@ -21,7 +21,7 @@ function SingleCarousel() {
                 <img
                     className="d-block w-100"
                     style={{ height: 'calc(70vh - 56px)', objectFit: 'cover' }}
-                    src="shoppingimg2.jpg"
+                    src="shopping_2.jpg"
                     alt="Second slide"
                 />
                 <Carousel.Caption>
@@ -33,7 +33,7 @@ function SingleCarousel() {
                 <img
                     className="d-block w-100"
                     style={{ height: 'calc(70vh - 76px)', objectFit: 'cover' }}
-                    src="shoppingimg3.jpg"
+                    src="shopping_3.jpg"
                     alt="Third slide"
                 />
                 <Carousel.Caption>

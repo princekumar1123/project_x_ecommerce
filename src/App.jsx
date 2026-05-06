@@ -20,6 +20,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminUsers from "./pages/admin/AdminUsers";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
     const dispatch = useDispatch();
@@ -37,6 +39,7 @@ function App() {
                 <Route path="detail" element={<CardDetails />} />
                 <Route path="newproduct" element={<AdminRoute><AddProduct /></AdminRoute>} />
                 <Route path="cart" element={<ProtectedRoute><AddToCart /></ProtectedRoute>} />
+                <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
                 <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
                 <Route path="orders/:orderId" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
@@ -48,6 +51,7 @@ function App() {
             {/* ── Admin routes ── */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>}>
                 <Route path="products" element={<AdminProducts />} />
+                <Route path="users" element={<AdminUsers />} />
             </Route>
         </Routes>
     );

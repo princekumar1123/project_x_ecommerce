@@ -7,6 +7,8 @@ import Credential from "./credential";
 import axiosInstance from "../api/axiosInstance";
 import PageHeader from "../components/PageHeader";
 import ReviewSection from "../components/ReviewSection";
+import WishlistButton from "../components/WishlistButton";
+import SimilarProducts from "../components/SimilarProducts";
 import "../Styles/CardDetail.css";
 
 function CardDetails() {
@@ -36,8 +38,17 @@ function CardDetails() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        setCardData(null);
+        setMainImage(null);
         fetchProduct();
     }, [id]);
+
+    // Track recently viewed (fire-and-forget, only for authenticated users)
+    useEffect(() => {
+        if (isAuthenticated && id) {
+            axiosInstance.post("/user/recently-viewed", { productId: id }).catch(() => {});
+        }
+    }, [id, isAuthenticated]);
 
     const handleAddToCart = async () => {
         if (!isAuthenticated) { setOpen(true); return; }
@@ -202,6 +213,12 @@ function CardDetails() {
 
                     {/* Actions */}
                     <div className="detail-actions">
+                        <WishlistButton
+                            productId={cardData._id}
+                            onLoginRequired={() => setOpen(true)}
+                            size={20}
+                            style={{ borderRadius: 10, width: 46, height: 46, border: "1.5px solid #E0E0E0" }}
+                        />
                         <button
                             className="btn-add-to-cart"
                             onClick={handleAddToCart}
@@ -243,6 +260,12 @@ function CardDetails() {
                 productRating={cardData.rating}
                 reviewCount={cardData.reviewCount || 0}
                 onReviewChange={fetchProduct}
+            />
+
+            {/* ── Similar Products ── */}
+            <SimilarProducts
+                productId={cardData._id}
+                onLoginRequired={() => setOpen(true)}
             />
         </div>
     );

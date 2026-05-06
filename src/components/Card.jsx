@@ -1,7 +1,8 @@
 import React from "react";
 import "../Styles/Card.css";
+import WishlistButton from "./WishlistButton";
 
-function Card({ title, description, image, rating, reviews, price, originalPrice, discount }) {
+function Card({ title, description, image, rating, reviews, price, originalPrice, discount, productId, onLoginRequired }) {
     const renderStars = () => {
         const stars = [];
         for (let i = 1; i <= 5; i++) {
@@ -16,6 +17,16 @@ function Card({ title, description, image, rating, reviews, price, originalPrice
 
     return (
         <div className="card">
+            {/* Wishlist heart */}
+            {productId && (
+                <div style={{ position: "absolute", top: 8, left: 8, zIndex: 2 }}>
+                    <WishlistButton
+                        productId={productId}
+                        onLoginRequired={onLoginRequired}
+                        size={15}
+                    />
+                </div>
+            )}
             <img src={image} alt={title} className="card-image" />
             <div className="card-content">
                 <h5 className="card-title">{title}</h5>

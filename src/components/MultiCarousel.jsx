@@ -2,13 +2,10 @@ import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Card from "./Card";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
-function ResponsiveCarousel({ data, dir }) {
-
-
-    console.log("data", data);
+function ResponsiveCarousel({ data, dir, onLoginRequired }) {
 
     const navigate = useNavigate()
 
@@ -49,11 +46,13 @@ function ResponsiveCarousel({ data, dir }) {
             {data.map((item, index) => (
                 <div key={index} style={{ padding: "10px", display: "flex", justifyContent: "center" }} onClick={() => { navigate("/detail", { state: { id: item._id } }) }}>
                     <Card
+                        productId={item._id}
+                        onLoginRequired={onLoginRequired}
                         title={item.title}
                         description={item.description}
                         image={item.image[0]}
                         rating={item.rating}
-                        reviews={item.review.length}
+                        reviews={item.reviewCount ?? 0}
                         price={Math.round(item.maxPrice - ((item.discount / 100) * item.maxPrice).toFixed(2))}
                         originalPrice={item.maxPrice}
                         discount={item.discount}
