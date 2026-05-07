@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { LogoutOutlined, PlusCircleOutlined, MenuOutlined, LoginOutlined, UserOutlined, ShoppingCartOutlined, HistoryOutlined, SearchOutlined, DashboardOutlined, HeartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { Modal, notification, Badge } from "antd";
+import { Modal, Badge } from "antd";
 import "../Styles/TopNavBar.css";
 import Credential from "../pages/credential";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,8 @@ import { logout } from "../store/authSlice";
 import { fetchCart } from "../store/cartSlice";
 import { fetchWishlist } from "../store/wishlistSlice";
 import SearchSuggestions from "./SearchSuggestions";
+import { toastSuccess } from "../utils/swal";
+import axiosInstance from "../api/axiosInstance";
 
 const TopNavBar = () => {
     const navigate = useNavigate();
@@ -22,7 +24,6 @@ const TopNavBar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const searchWrapRef = useRef(null);
-    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -42,17 +43,25 @@ const TopNavBar = () => {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
+    // Open login modal when session-expired popup triggers it
+    useEffect(() => {
+        const handler = () => setOpen(true);
+        window.addEventListener("open-login-modal", handler);
+        return () => window.removeEventListener("open-login-modal", handler);
+    }, []);
+
     const handleClose = () => setOpen(false);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            // Tell the server to clear the httpOnly refresh-token cookie
+            await axiosInstance.post("/user/logout");
+        } catch {
+            // Ignore — we still clear client state regardless
+        }
         dispatch(logout());
         navigate("/");
-        api.open({
-            type: "success",
-            message: "Logged out",
-            description: "You have been logged out successfully.",
-            duration: 2,
-        });
+        toastSuccess("Logged out successfully");
     };
 
     const handleSearch = (e) => {
@@ -232,9 +241,7 @@ const TopNavBar = () => {
                     )}
                 </div>
             )}
-            {contextHolder}
         </div>
     );
 };
-
 export default TopNavBar;

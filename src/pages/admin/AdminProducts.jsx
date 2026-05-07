@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Modal, notification } from "antd";
 import {
     PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined,
-    ExclamationCircleOutlined, FilterOutlined, ReloadOutlined,
+    FilterOutlined, ReloadOutlined,
     EyeOutlined, ArrowUpOutlined, ArrowDownOutlined
 } from "@ant-design/icons";
 import axiosInstance from "../../api/axiosInstance";
 import EditProductModal from "./EditProductModal";
+import { toastSuccess, toastError, confirmDanger } from "../../utils/swal";
 import "./AdminProducts.css";
 
 const CATEGORIES = ["All", "Electronics", "Clothing", "Home Appliances", "Books", "Toys", "Beauty", "Sports", "Furniture", "Grocery"];
@@ -27,9 +27,7 @@ export default function AdminProducts() {
     const [sortField, setSortField] = useState("createdAt");
     const [sortDir, setSortDir] = useState("desc");
     const [editProduct, setEditProduct] = useState(null);
-    const [deleteId, setDeleteId] = useState(null);
     const [deleting, setDeleting] = useState(false);
-    const [api, ctx] = notification.useNotification();
 
     const LIMIT = 10;
 
@@ -49,14 +47,16 @@ export default function AdminProducts() {
             setTotal(res.data.total || 0);
             setTotalPages(res.data.totalPages || 1);
         } catch (e) {
-            api.open({ type: "error", message: "Failed to load products", duration: 3 });
+            toastError("Failed to load products");
         } finally {
             setLoading(false);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         fetchProducts(page, search, category, sortField, sortDir);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, search, category, sortField, sortDir]);
 
     const handleSearch = (e) => {
@@ -80,15 +80,20 @@ export default function AdminProducts() {
         setPage(1);
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (id) => {
+        const ok = await confirmDanger({
+            title: "Delete Product",
+            text: "Are you sure you want to delete this product? This action cannot be undone.",
+            confirmText: "Delete",
+        });
+        if (!ok) return;
         setDeleting(true);
         try {
-            await axiosInstance.delete(`/ecommerce/deleteproduct/${deleteId}`);
-            api.open({ type: "success", message: "Product deleted", duration: 2 });
-            setDeleteId(null);
+            await axiosInstance.delete(`/ecommerce/deleteproduct/${id}`);
+            toastSuccess("Product deleted");
             fetchProducts(page, search, category, sortField, sortDir);
-        } catch (e) {
-            api.open({ type: "error", message: "Failed to delete product", duration: 3 });
+        } catch {
+            toastError("Failed to delete product");
         } finally {
             setDeleting(false);
         }
@@ -110,8 +115,6 @@ export default function AdminProducts() {
 
     return (
         <div className="admin-products">
-            {ctx}
-
             {/* Edit modal */}
             {editProduct && (
                 <EditProductModal
@@ -120,18 +123,6 @@ export default function AdminProducts() {
                     onSave={handleEditSave}
                 />
             )}
-
-            {/* Delete confirm modal */}
-            <Modal
-                open={!!deleteId}
-                onCancel={() => setDeleteId(null)}
-                onOk={handleDelete}
-                okText="Delete"
-                okButtonProps={{ danger: true, loading: deleting }}
-                title={<span><ExclamationCircleOutlined style={{ color: "#F44336", marginRight: 8 }} />Delete Product</span>}
-            >
-                <p>Are you sure you want to delete this product? This action cannot be undone.</p>
-            </Modal>
 
             {/* Header */}
             <div className="ap-header">
@@ -286,8 +277,9 @@ export default function AdminProducts() {
                                             </button>
                                             <button
                                                 className="ap-action-btn delete"
-                                                onClick={() => setDeleteId(p._id)}
+                                                onClick={() => handleDelete(p._id)}
                                                 title="Delete"
+                                                disabled={deleting}
                                             >
                                                 <DeleteOutlined />
                                             </button>

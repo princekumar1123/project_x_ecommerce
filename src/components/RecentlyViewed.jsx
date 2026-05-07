@@ -4,6 +4,21 @@ import { useSelector } from "react-redux";
 import { HistoryOutlined } from "@ant-design/icons";
 import axiosInstance from "../api/axiosInstance";
 import WishlistButton from "./WishlistButton";
+import "../Styles/RecentlyViewed.css";
+
+function SkeletonCards() {
+    return Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="rv-skeleton-card">
+            <div className="rv-skeleton" style={{ height: 120 }} />
+            <div style={{ padding: "0.6rem 0.75rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div className="rv-skeleton" style={{ height: 10, width: "40%" }} />
+                <div className="rv-skeleton" style={{ height: 12, width: "90%" }} />
+                <div className="rv-skeleton" style={{ height: 12, width: "65%" }} />
+                <div className="rv-skeleton" style={{ height: 14, width: "50%", marginTop: "0.25rem" }} />
+            </div>
+        </div>
+    ));
+}
 
 export default function RecentlyViewed({ onLoginRequired }) {
     const navigate = useNavigate();
@@ -21,130 +36,79 @@ export default function RecentlyViewed({ onLoginRequired }) {
             .finally(() => setLoading(false));
     }, [isAuthenticated]);
 
+    // Don't render anything if not logged in or no history yet
     if (!isAuthenticated || (!loading && items.length === 0)) return null;
 
     return (
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 1rem 2rem" }}>
-            <div style={{
-                background: "#fff",
-                borderRadius: 12,
-                padding: "1.25rem 1.5rem",
-                boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
-            }}>
-                <h2 style={{
-                    fontSize: "1.1rem",
-                    fontWeight: 700,
-                    color: "#212121",
-                    margin: "0 0 1rem",
-                    paddingBottom: "0.75rem",
-                    borderBottom: "1px solid #F0F0F0",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                }}>
-                    <HistoryOutlined style={{ color: "#1976D2" }} />
+        <section className="rv-section">
+            <div className="rv-header">
+                <h2 className="rv-title">
+                    <HistoryOutlined className="rv-title-icon" />
                     Recently Viewed
+                    {!loading && items.length > 0 && (
+                        <span className="rv-count">({items.length})</span>
+                    )}
                 </h2>
+            </div>
 
+            <div className="rv-track">
                 {loading ? (
-                    <div style={{ display: "flex", gap: "0.75rem", overflow: "hidden" }}>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} style={{
-                                flex: "0 0 160px",
-                                height: 200,
-                                borderRadius: 10,
-                                background: "linear-gradient(90deg,#F5F5F5 25%,#EEEEEE 50%,#F5F5F5 75%)",
-                                backgroundSize: "200% 100%",
-                                animation: "shimmer 1.2s infinite",
-                            }} />
-                        ))}
-                    </div>
+                    <SkeletonCards />
                 ) : (
-                    <div style={{
-                        display: "flex",
-                        gap: "0.75rem",
-                        overflowX: "auto",
-                        paddingBottom: "0.5rem",
-                        scrollbarWidth: "thin",
-                    }}>
-                        {items.map(({ productId: p }) => {
-                            if (!p || !p._id) return null;
-                            const finalPrice = Math.round(
-                                p.maxPrice - (p.discount / 100) * p.maxPrice
-                            );
-                            return (
-                                <div
-                                    key={p._id}
-                                    style={{
-                                        flex: "0 0 160px",
-                                        background: "#FAFAFA",
-                                        borderRadius: 10,
-                                        border: "1px solid #F0F0F0",
-                                        overflow: "hidden",
-                                        cursor: "pointer",
-                                        transition: "box-shadow 0.2s, transform 0.2s",
-                                        position: "relative",
-                                    }}
-                                    onClick={() => navigate("/detail", { state: { id: p._id } })}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.1)";
-                                        e.currentTarget.style.transform = "translateY(-2px)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.boxShadow = "none";
-                                        e.currentTarget.style.transform = "translateY(0)";
-                                    }}
-                                >
-                                    {/* Wishlist heart */}
-                                    <div style={{ position: "absolute", top: 5, right: 5, zIndex: 2 }}>
-                                        <WishlistButton
-                                            productId={p._id}
-                                            onLoginRequired={onLoginRequired}
-                                            size={13}
-                                        />
-                                    </div>
+                    items.map(({ productId: p }) => {
+                        if (!p?._id) return null;
+                        const finalPrice = Math.round(
+                            p.maxPrice - (p.discount / 100) * p.maxPrice
+                        );
+                        return (
+                            <div
+                                key={p._id}
+                                className="rv-card"
+                                onClick={() => navigate("/detail", { state: { id: p._id } })}
+                            >
+                                {/* Wishlist heart */}
+                                <div className="rv-heart">
+                                    <WishlistButton
+                                        productId={p._id}
+                                        onLoginRequired={onLoginRequired}
+                                        size={13}
+                                    />
+                                </div>
 
-                                    {/* Image */}
-                                    <div style={{
-                                        height: 110,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        padding: "0.5rem",
-                                        background: "#fff",
-                                    }}>
-                                        <img
-                                            src={p.image?.[0]}
-                                            alt={p.title}
-                                            style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                                        />
-                                    </div>
+                                {/* Image */}
+                                <div className="rv-img-wrap">
+                                    <img
+                                        src={p.image?.[0]}
+                                        alt={p.title}
+                                        className="rv-img"
+                                    />
+                                </div>
 
-                                    {/* Info */}
-                                    <div style={{ padding: "0.5rem 0.6rem" }}>
-                                        <p style={{
-                                            fontSize: "0.75rem",
-                                            fontWeight: 600,
-                                            color: "#212121",
-                                            margin: "0 0 0.2rem",
-                                            display: "-webkit-box",
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: "vertical",
-                                            overflow: "hidden",
-                                            lineHeight: 1.3,
-                                        }}>
-                                            {p.title}
-                                        </p>
-                                        <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#212121" }}>
+                                {/* Info */}
+                                <div className="rv-body">
+                                    {p.category && (
+                                        <span className="rv-category">{p.category}</span>
+                                    )}
+                                    <p className="rv-name">{p.title}</p>
+                                    <div className="rv-price-row">
+                                        <span className="rv-price">
                                             ₹{finalPrice.toLocaleString("en-IN")}
                                         </span>
+                                        {p.maxPrice !== finalPrice && (
+                                            <span className="rv-mrp">
+                                                ₹{p.maxPrice.toLocaleString("en-IN")}
+                                            </span>
+                                        )}
+                                        {p.discount > 0 && (
+                                            <span className="rv-discount">{p.discount}% off</span>
+                                        )}
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
+                            </div>
+                        );
+                    })
                 )}
             </div>
-        </div>
+        </section>
     );
 }

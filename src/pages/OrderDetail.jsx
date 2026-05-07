@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Spin, Tag, Modal, notification } from "antd";
+import { Spin, Tag } from "antd";
 import { CheckCircleFilled, CloseCircleOutlined } from "@ant-design/icons";
 import axiosInstance from "../api/axiosInstance";
 import PageHeader from "../components/PageHeader";
+import { toastSuccess, toastError, confirmDanger } from "../utils/swal";
 import "./OrderDetail.css";
 
 const STATUS_STEPS = [
@@ -26,27 +27,30 @@ export default function OrderDetail() {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [cancelling, setCancelling] = useState(false);
-    const [showCancelModal, setShowCancelModal] = useState(false);
-    const [api, ctx] = notification.useNotification();
 
     useEffect(() => {
         window.scrollTo(0, 0);
         axiosInstance.get(`/user/orders/${orderId}`)
             .then((res) => setOrder(res.data.order))
-            .catch(() => api.open({ type: "error", message: "Order not found", duration: 3 }))
+            .catch(() => toastError("Order not found"))
             .finally(() => setLoading(false));
     }, [orderId]);
 
     const handleCancel = async () => {
+        const ok = await confirmDanger({
+            title: "Cancel Order",
+            text: "Are you sure you want to cancel this order? This action cannot be undone.",
+            confirmText: "Yes, Cancel Order",
+        });
+        if (!ok) return;
         setCancelling(true);
         try {
             const res = await axiosInstance.patch(`/user/orders/${orderId}/cancel`);
             setOrder(res.data.order);
-            setShowCancelModal(false);
-            api.open({ type: "success", message: "Order cancelled successfully", duration: 2 });
+            toastSuccess("Order cancelled successfully");
         } catch (err) {
             const msg = err.response?.data?.error?.message || "Failed to cancel order.";
-            api.open({ type: "error", message: msg, duration: 3 });
+            toastError(msg);
         } finally { setCancelling(false); }
     };
 
@@ -61,18 +65,6 @@ export default function OrderDetail() {
 
     return (
         <div className="order-detail-page">
-            {ctx}
-            <Modal
-                open={showCancelModal}
-                onCancel={() => setShowCancelModal(false)}
-                onOk={handleCancel}
-                okText="Yes, Cancel Order"
-                okButtonProps={{ danger: true, loading: cancelling }}
-                title="Cancel Order"
-            >
-                <p>Are you sure you want to cancel this order? This action cannot be undone.</p>
-            </Modal>
-
             <PageHeader title="Order Details" backTo="/orders" backLabel="My Orders" />
 
             {/* Order header */}
@@ -183,8 +175,8 @@ export default function OrderDetail() {
 
                     {/* Cancel button */}
                     {canCancel && (
-                        <button className="od-cancel-btn" onClick={() => setShowCancelModal(true)}>
-                            Cancel Order
+                        <button className="od-cancel-btn" onClick={handleCancel} disabled={cancelling}>
+                            {cancelling ? "Cancelling..." : "Cancel Order"}
                         </button>
                     )}
                 </div>

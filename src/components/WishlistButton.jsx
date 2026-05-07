@@ -43,6 +43,7 @@ export default function WishlistButton({ productId, onLoginRequired, size = 18, 
             onClick={handleClick}
             title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             disabled={busy}
+            className="wishlist-btn-heart"
             style={{
                 background: "rgba(255,255,255,0.92)",
                 border: "none",
@@ -62,9 +63,15 @@ export default function WishlistButton({ productId, onLoginRequired, size = 18, 
             onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
         >
             {isWishlisted ? (
-                <HeartFilled style={{ fontSize: size, color: "#E53935" }} />
+                <HeartFilled
+                    style={{ fontSize: size, display: "block" }}
+                    className="wl-heart-icon wl-heart-filled"
+                />
             ) : (
-                <HeartOutlined style={{ fontSize: size, color: "#9E9E9E" }} />
+                <HeartOutlined
+                    style={{ fontSize: size, display: "block" }}
+                    className="wl-heart-icon wl-heart-outline"
+                />
             )}
         </button>
     );

@@ -2,9 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import {
     SearchOutlined, ReloadOutlined, EyeOutlined,
     DeleteOutlined, ArrowUpOutlined, ArrowDownOutlined,
-    CloseOutlined, UserOutlined, ExclamationCircleOutlined,
+    CloseOutlined, UserOutlined,
 } from "@ant-design/icons";
 import axiosInstance from "../../api/axiosInstance";
+import { toastSuccess, toastError, confirmDanger, confirmAction } from "../../utils/swal";
 import "./AdminUsers.css";
 
 const ROLE_TABS = ["All", "user", "admin"];
@@ -129,36 +130,6 @@ function ViewUserModal({ user, onClose }) {
     );
 }
 
-// ── Confirm dialog ────────────────────────────────────────────────────────────
-
-function ConfirmDialog({ config, onConfirm, onCancel }) {
-    if (!config) return null;
-    return (
-        <div className="au-confirm-overlay" onClick={onCancel}>
-            <div className="au-confirm-box" onClick={(e) => e.stopPropagation()}>
-                <div className="au-confirm-icon">
-                    <ExclamationCircleOutlined style={{ color: config.type === "delete" ? "#C62828" : config.type === "promote" ? "#2E7D32" : "#E65100" }} />
-                </div>
-                <h4 className="au-confirm-title">{config.title}</h4>
-                <p className="au-confirm-msg">{config.message}</p>
-                <div className="au-confirm-btns">
-                    <button className="au-confirm-cancel" onClick={onCancel}>Cancel</button>
-                    <button className={`au-confirm-ok ${config.type}`} onClick={onConfirm}>
-                        {config.okLabel}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ── Toast ─────────────────────────────────────────────────────────────────────
-
-function Toast({ toast }) {
-    if (!toast) return null;
-    return <div className={`au-toast ${toast.type}`}>{toast.message}</div>;
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function AdminUsers() {
@@ -171,14 +142,7 @@ export default function AdminUsers() {
     const [searchInput, setSearchInput] = useState("");
     const [roleFilter, setRoleFilter] = useState("All");
     const [viewUser, setViewUser]     = useState(null);
-    const [confirm, setConfirm]       = useState(null); // { type, title, message, okLabel, onOk }
-    const [toast, setToast]           = useState(null);
     const [acting, setActing]         = useState(false);
-
-    const showToast = (message, type = "success") => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
-    };
 
     const fetchUsers = useCallback(async (pg = 1, q = "", role = "All") => {
         setLoading(true);
@@ -194,7 +158,7 @@ export default function AdminUsers() {
             setTotal(res.data.total || 0);
             setTotalPages(res.data.totalPages || 1);
         } catch {
-            showToast("Failed to load users", "error");
+            toastError("Failed to load users");
         } finally {
             setLoading(false);
         }
@@ -225,25 +189,20 @@ export default function AdminUsers() {
 
     // ── Delete ────────────────────────────────────────────────────────────────
 
-    const confirmDelete = (user) => {
-        setConfirm({
-            type: "delete",
+    const confirmDelete = async (user) => {
+        const ok = await confirmDanger({
             title: "Delete User",
-            message: `Are you sure you want to permanently delete "${user.name}"? This cannot be undone.`,
-            okLabel: "Delete",
-            onOk: () => doDelete(user._id),
+            text: `Permanently delete "${user.name}"? This cannot be undone.`,
+            confirmText: "Delete",
         });
-    };
-
-    const doDelete = async (id) => {
+        if (!ok) return;
         setActing(true);
-        setConfirm(null);
         try {
-            await axiosInstance.delete(`/user/deleteAUserById/${id}`);
-            showToast("User deleted successfully");
+            await axiosInstance.delete(`/user/deleteAUserById/${user._id}`);
+            toastSuccess("User deleted successfully");
             fetchUsers(page, search, roleFilter);
         } catch {
-            showToast("Failed to delete user", "error");
+            toastError("Failed to delete user");
         } finally {
             setActing(false);
         }
@@ -251,28 +210,24 @@ export default function AdminUsers() {
 
     // ── Role change ───────────────────────────────────────────────────────────
 
-    const confirmRoleChange = (user, newRole) => {
+    const confirmRoleChange = async (user, newRole) => {
         const isPromote = newRole === "admin";
-        setConfirm({
-            type: isPromote ? "promote" : "demote",
+        const ok = await confirmAction({
             title: isPromote ? "Promote to Admin" : "Demote to User",
-            message: isPromote
+            text: isPromote
                 ? `Grant admin privileges to "${user.name}"?`
                 : `Remove admin privileges from "${user.name}"?`,
-            okLabel: isPromote ? "Promote" : "Demote",
-            onOk: () => doRoleChange(user._id, newRole),
+            confirmText: isPromote ? "Promote" : "Demote",
+            icon: isPromote ? "question" : "warning",
         });
-    };
-
-    const doRoleChange = async (id, newRole) => {
+        if (!ok) return;
         setActing(true);
-        setConfirm(null);
         try {
-            await axiosInstance.put(`/user/updateAUserById/${id}`, { role: newRole });
-            showToast(`Role updated to ${newRole}`);
+            await axiosInstance.put(`/user/updateAUserById/${user._id}`, { role: newRole });
+            toastSuccess(`Role updated to ${newRole}`);
             fetchUsers(page, search, roleFilter);
         } catch {
-            showToast("Failed to update role", "error");
+            toastError("Failed to update role");
         } finally {
             setActing(false);
         }
@@ -442,12 +397,6 @@ export default function AdminUsers() {
 
             {/* Modals */}
             <ViewUserModal user={viewUser} onClose={() => setViewUser(null)} />
-            <ConfirmDialog
-                config={confirm}
-                onConfirm={confirm?.onOk}
-                onCancel={() => setConfirm(null)}
-            />
-            <Toast toast={toast} />
         </div>
     );
 }

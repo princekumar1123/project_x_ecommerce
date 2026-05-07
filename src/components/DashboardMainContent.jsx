@@ -4,14 +4,12 @@ import SingleCarousel from "./Carousel";
 import RecentlyViewed from "./RecentlyViewed";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import axiosInstance from "../api/axiosInstance";
 
 function DashboardMainContent() {
     const [allData, setAllData] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const { isAuthenticated } = useSelector((s) => s.auth);
 
     useEffect(() => {
         axiosInstance
@@ -43,9 +41,6 @@ function DashboardMainContent() {
                 <SingleCarousel />
             </div>
 
-            {/* Recently Viewed — shown below hero carousel */}
-            <RecentlyViewed />
-
             {allData.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "4rem", color: "#888", fontSize: "1.2rem" }}>
                     No products available yet.
@@ -76,6 +71,9 @@ function DashboardMainContent() {
                     </div>
                 ))
             )}
+
+            {/* Recently Viewed — shown at the bottom after all categories */}
+            <RecentlyViewed />
         </>
     );
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Modal, notification } from "antd";
+import { Modal } from "antd";
 import { LikeOutlined, LikeFilled, EditOutlined, DeleteOutlined, CheckCircleFilled } from "@ant-design/icons";
 import axiosInstance from "../api/axiosInstance";
+import { toastSuccess, toastError, toastWarning, toastInfo, confirmDanger } from "../utils/swal";
 import "./ReviewSection.css";
 
 // ── Star renderer ─────────────────────────────────────────────────────────────
@@ -48,7 +49,6 @@ function ReviewModal({ open, onClose, productId, existing, onSuccess }) {
     const [title, setTitle] = useState(existing?.title || "");
     const [text, setText] = useState(existing?.text || "");
     const [submitting, setSubmitting] = useState(false);
-    const [api, ctx] = notification.useNotification();
 
     useEffect(() => {
         if (open) {
@@ -61,20 +61,20 @@ function ReviewModal({ open, onClose, productId, existing, onSuccess }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (rating === 0) { api.open({ type: "warning", message: "Please select a star rating", duration: 2 }); return; }
+        if (rating === 0) { toastWarning("Please select a star rating"); return; }
         setSubmitting(true);
         try {
             if (existing) {
                 await axiosInstance.put(`/reviews/${existing._id}`, { rating, title, text });
-                api.open({ type: "success", message: "Review updated!", duration: 2 });
+                toastSuccess("Review updated!");
             } else {
                 await axiosInstance.post("/reviews", { productId, rating, title, text });
-                api.open({ type: "success", message: "Review submitted!", duration: 2 });
+                toastSuccess("Review submitted!");
             }
-            setTimeout(() => { onSuccess?.(); onClose(); }, 800);
+            setTimeout(() => { onSuccess?.(); onClose(); }, 600);
         } catch (err) {
             const msg = err.response?.data?.error?.message || "Failed to submit review.";
-            api.open({ type: "error", message: msg, duration: 3 });
+            toastError(msg);
         } finally {
             setSubmitting(false);
         }
@@ -91,7 +91,6 @@ function ReviewModal({ open, onClose, productId, existing, onSuccess }) {
             closable={false}
             styles={{ body: { padding: 0 } }}
         >
-            {ctx}
             <div className="review-modal-inner">
                 {/* Header */}
                 <div className="review-modal-header">
@@ -233,12 +232,10 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [canReview, setCanReview] = useState(false);
     const [alreadyReviewed, setAlreadyReviewed] = useState(false);
     const [existingReview, setExistingReview] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [editTarget, setEditTarget] = useState(null);
-    const [api, ctx] = notification.useNotification();
 
     const fetchReviews = async (pg = 1, srt = sort) => {
         setLoading(true);
@@ -269,7 +266,6 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
         if (!isAuthenticated) return;
         try {
             const res = await axiosInstance.get(`/reviews/can-review/${productId}`);
-            setCanReview(res.data.canReview);
             setAlreadyReviewed(res.data.alreadyReviewed);
             setExistingReview(res.data.existingReview);
         } catch (e) { /* silent */ }
@@ -278,6 +274,7 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
     useEffect(() => {
         fetchReviews(1, sort);
         fetchCanReview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productId, isAuthenticated]);
 
     const handleSort = (s) => {
@@ -293,7 +290,7 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
     };
 
     const handleHelpful = async (reviewId) => {
-        if (!isAuthenticated) { api.open({ type: "info", message: "Please login to vote", duration: 2 }); return; }
+        if (!isAuthenticated) { toastInfo("Please login to vote"); return; }
         try {
             const res = await axiosInstance.post(`/reviews/${reviewId}/helpful`);
             setReviews((prev) => prev.map((r) =>
@@ -303,14 +300,20 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
     };
 
     const handleDelete = async (reviewId) => {
+        const ok = await confirmDanger({
+            title: "Delete Review",
+            text: "Are you sure you want to delete your review?",
+            confirmText: "Delete",
+        });
+        if (!ok) return;
         try {
             await axiosInstance.delete(`/reviews/${reviewId}`);
-            api.open({ type: "success", message: "Review deleted", duration: 2 });
+            toastSuccess("Review deleted");
             fetchReviews(1, sort);
             fetchCanReview();
             onReviewChange?.();
-        } catch (e) {
-            api.open({ type: "error", message: "Failed to delete review", duration: 3 });
+        } catch {
+            toastError("Failed to delete review");
         }
     };
 
@@ -328,7 +331,6 @@ export default function ReviewSection({ productId, productRating, reviewCount, o
 
     return (
         <div className="review-section" id="reviews-section">
-            {ctx}
             <ReviewModal
                 open={modalOpen}
                 onClose={() => { setModalOpen(false); setEditTarget(null); }}

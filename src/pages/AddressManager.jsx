@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Modal, notification } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleFilled, HomeOutlined, BankOutlined } from "@ant-design/icons";
 import axiosInstance from "../api/axiosInstance";
+import { toastSuccess, toastError, confirmDanger } from "../utils/swal";
 import "./AddressManager.css";
 
 const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Jammu & Kashmir","Ladakh","Puducherry","Chandigarh","Andaman & Nicobar","Dadra & Nagar Haveli","Daman & Diu","Lakshadweep"];
@@ -130,8 +130,6 @@ export default function AddressManager() {
     const [showForm, setShowForm] = useState(false);
     const [editTarget, setEditTarget] = useState(null);
     const [saving, setSaving] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-    const [api, ctx] = notification.useNotification();
 
     const fetchAddresses = async () => {
         try {
@@ -148,28 +146,33 @@ export default function AddressManager() {
         try {
             if (editTarget) {
                 await axiosInstance.put(`/user/addresses/${editTarget._id}`, form);
-                api.open({ type: "success", message: "Address updated", duration: 2 });
+                toastSuccess("Address updated");
             } else {
                 await axiosInstance.post("/user/addresses", form);
-                api.open({ type: "success", message: "Address added", duration: 2 });
+                toastSuccess("Address added");
             }
             setShowForm(false);
             setEditTarget(null);
             fetchAddresses();
         } catch (err) {
             const msg = err.response?.data?.error?.message || err.response?.data?.errors?.[0]?.msg || "Failed to save address.";
-            api.open({ type: "error", message: msg, duration: 3 });
+            toastError(msg);
         } finally { setSaving(false); }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (id) => {
+        const ok = await confirmDanger({
+            title: "Delete Address",
+            text: "Are you sure you want to delete this address?",
+            confirmText: "Delete",
+        });
+        if (!ok) return;
         try {
-            await axiosInstance.delete(`/user/addresses/${deleteId}`);
-            api.open({ type: "success", message: "Address deleted", duration: 2 });
-            setDeleteId(null);
+            await axiosInstance.delete(`/user/addresses/${id}`);
+            toastSuccess("Address deleted");
             fetchAddresses();
-        } catch (e) {
-            api.open({ type: "error", message: "Failed to delete address", duration: 3 });
+        } catch {
+            toastError("Failed to delete address");
         }
     };
 
@@ -182,11 +185,6 @@ export default function AddressManager() {
 
     return (
         <div className="addr-manager">
-            {ctx}
-            <Modal open={!!deleteId} onCancel={() => setDeleteId(null)} onOk={handleDelete} okText="Delete" okButtonProps={{ danger: true }} title="Delete Address">
-                <p>Are you sure you want to delete this address?</p>
-            </Modal>
-
             <div className="addr-manager-header">
                 <h3>Saved Addresses</h3>
                 {!showForm && (
@@ -222,7 +220,7 @@ export default function AddressManager() {
                             key={addr._id}
                             address={addr}
                             onEdit={(a) => { setEditTarget(a); setShowForm(true); }}
-                            onDelete={(id) => setDeleteId(id)}
+                            onDelete={(id) => handleDelete(id)}
                             onSetDefault={handleSetDefault}
                         />
                     ))}

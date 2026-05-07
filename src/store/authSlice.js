@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { jwtDecode } from "jwt-decode";
 
 const initialState = {
     token: null,
@@ -7,6 +8,7 @@ const initialState = {
     role: null,
     isAuthenticated: false,
     isAdmin: false,
+    sessionExpired: false,   // true → show "Session Expired" popup
 };
 
 const authSlice = createSlice({
@@ -32,27 +34,66 @@ const authSlice = createSlice({
             state.role = null;
             state.isAuthenticated = false;
             state.isAdmin = false;
+            state.sessionExpired = false;
             localStorage.removeItem("token");
             localStorage.removeItem("id");
             localStorage.removeItem("name");
             localStorage.removeItem("role");
         },
+        sessionExpiredAction: (state) => {
+            // Clear auth state but keep sessionExpired flag so the popup shows
+            state.token = null;
+            state.userId = null;
+            state.userName = null;
+            state.role = null;
+            state.isAuthenticated = false;
+            state.isAdmin = false;
+            state.sessionExpired = true;
+            localStorage.removeItem("token");
+            localStorage.removeItem("id");
+            localStorage.removeItem("name");
+            localStorage.removeItem("role");
+        },
+        clearSessionExpired: (state) => {
+            state.sessionExpired = false;
+        },
         restoreAuth: (state) => {
-            const token = localStorage.getItem("token");
-            const id = localStorage.getItem("id");
-            const name = localStorage.getItem("name");
-            const role = localStorage.getItem("role") || "user";
-            if (token && id && name) {
-                state.token = JSON.parse(token);
+            const raw   = localStorage.getItem("token");
+            const id    = localStorage.getItem("id");
+            const name  = localStorage.getItem("name");
+            const role  = localStorage.getItem("role") || "user";
+
+            if (!raw || !id || !name) return;
+
+            try {
+                const token = JSON.parse(raw);
+
+                // Check expiry before restoring — don't put an expired token in state.
+                // The axios interceptor will silently refresh it on the first API call,
+                // but we shouldn't mark the user as authenticated with a dead token.
+                const { exp } = jwtDecode(token);
+                if (exp * 1000 < Date.now()) {
+                    // Token expired — clear storage; refresh will happen on next API call
+                    localStorage.removeItem("token");
+                    return;
+                }
+
+                state.token = token;
                 state.userId = JSON.parse(id);
                 state.userName = JSON.parse(name);
                 state.role = role;
                 state.isAuthenticated = true;
                 state.isAdmin = role === "admin";
+            } catch {
+                // Malformed token — clear everything
+                localStorage.removeItem("token");
+                localStorage.removeItem("id");
+                localStorage.removeItem("name");
+                localStorage.removeItem("role");
             }
         },
     },
 });
 
-export const { loginSuccess, logout, restoreAuth } = authSlice.actions;
+export const { loginSuccess, logout, restoreAuth, sessionExpiredAction, clearSessionExpired } = authSlice.actions;
 export default authSlice.reducer;

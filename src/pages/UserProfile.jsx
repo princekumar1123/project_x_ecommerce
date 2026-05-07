@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { notification, Spin } from "antd";
+import { Spin } from "antd";
 import { useSelector } from "react-redux";
 import axiosInstance from "../api/axiosInstance";
 import PageHeader from "../components/PageHeader";
 import AddressManager from "./AddressManager";
+import { toastSuccess, toastError } from "../utils/swal";
 import "./AddressManager.css";
 
 function UserProfile() {
@@ -14,7 +15,6 @@ function UserProfile() {
     const [formData, setFormData] = useState({ name: "", gender: "", mobile: "" });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         axiosInstance
@@ -38,10 +38,10 @@ function UserProfile() {
             const res = await axiosInstance.put("/user/profile", formData);
             setProfile(res.data.user);
             setEditing(false);
-            api.open({ type: "success", message: "Profile updated!", duration: 2 });
+            toastSuccess("Profile updated!");
         } catch (err) {
             const msg = err.response?.data?.error?.message || "Failed to update profile.";
-            api.open({ type: "error", message: "Error", description: msg, duration: 3 });
+            toastError(msg);
         } finally {
             setSaving(false);
         }
@@ -60,7 +60,6 @@ function UserProfile() {
 
     return (
         <div style={{ maxWidth: "600px", margin: "2rem auto", padding: "0 1rem 3rem" }}>
-            {contextHolder}
             <PageHeader
                 title="My Account"
                 subtitle="Manage your profile and addresses"

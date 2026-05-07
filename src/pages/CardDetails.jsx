@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Spin, Modal, notification } from "antd";
+import { Spin, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../store/cartSlice";
 import Credential from "./credential";
@@ -9,6 +9,7 @@ import PageHeader from "../components/PageHeader";
 import ReviewSection from "../components/ReviewSection";
 import WishlistButton from "../components/WishlistButton";
 import SimilarProducts from "../components/SimilarProducts";
+import { toastSuccess, toastError } from "../utils/swal";
 import "../Styles/CardDetail.css";
 
 function CardDetails() {
@@ -22,7 +23,6 @@ function CardDetails() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { isAuthenticated } = useSelector((s) => s.auth);
-    const [api, contextHolder] = notification.useNotification();
 
     const fetchProduct = () => {
         axiosInstance
@@ -31,9 +31,7 @@ function CardDetails() {
                 setCardData(res.data);
                 setMainImage((prev) => prev || res.data.image[0]);
             })
-            .catch(() => {
-                api.open({ type: "error", message: "Failed to load product", duration: 3 });
-            });
+            .catch(() => toastError("Failed to load product"));
     };
 
     useEffect(() => {
@@ -41,6 +39,7 @@ function CardDetails() {
         setCardData(null);
         setMainImage(null);
         fetchProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     // Track recently viewed (fire-and-forget, only for authenticated users)
@@ -55,10 +54,10 @@ function CardDetails() {
         setAddingToCart(true);
         try {
             await dispatch(addToCartAsync({ productId: cardData._id, quantity: 1 })).unwrap();
-            api.open({ type: "success", message: "Added to cart!", duration: 2 });
+            toastSuccess("Added to cart!");
             setTimeout(() => navigate("/cart"), 800);
         } catch (err) {
-            api.open({ type: "error", message: err || "Failed to add to cart", duration: 3 });
+            toastError(err || "Failed to add to cart");
         } finally {
             setAddingToCart(false);
         }
@@ -77,7 +76,6 @@ function CardDetails() {
 
     return (
         <div className="detail-page">
-            {contextHolder}
             <Modal footer={null} open={open} onCancel={() => setOpen(false)} width={560}>
                 <Credential handleClose={() => setOpen(false)} />
             </Modal>

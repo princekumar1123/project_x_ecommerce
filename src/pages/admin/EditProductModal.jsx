@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Modal, notification } from "antd";
+import { Modal } from "antd";
 import { PictureOutlined } from "@ant-design/icons";
 import axiosInstance from "../../api/axiosInstance";
+import { toastSuccess, toastError } from "../../utils/swal";
 import "./EditProductModal.css";
 
 const CATEGORIES = ["Electronics", "Clothing", "Home Appliances", "Books", "Toys", "Beauty", "Sports", "Furniture", "Grocery"];
 
 export default function EditProductModal({ product, onClose, onSave }) {
-    const [api, ctx] = notification.useNotification();
     const [submitting, setSubmitting] = useState(false);
     const [colorInput, setColorInput] = useState("#000000");
     const [newImages, setNewImages] = useState([]);
@@ -89,11 +89,11 @@ export default function EditProductModal({ product, onClose, onSave }) {
         };
         try {
             await axiosInstance.put(`/ecommerce/updateproduct/${product._id}`, payload);
-            api.open({ type: "success", message: "Product updated!", duration: 2 });
+            toastSuccess("Product updated!");
             setTimeout(() => { onSave(); }, 600);
         } catch (err) {
             const msg = err.response?.data?.error?.message || "Failed to update product.";
-            api.open({ type: "error", message: msg, duration: 3 });
+            toastError(msg);
         } finally {
             setSubmitting(false);
         }
@@ -114,7 +114,6 @@ export default function EditProductModal({ product, onClose, onSave }) {
             closable={false}
             styles={{ body: { padding: 0 } }}
         >
-            {ctx}
             <div className="edit-modal-inner">
                 <div className="edit-modal-header">
                     <h3>Edit Product</h3>

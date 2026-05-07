@@ -283,16 +283,15 @@
 import { useState } from 'react';
 import '../Styles/NewProduct.css';
 import axiosInstance from '../api/axiosInstance';
-import { notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { PictureOutlined } from '@ant-design/icons';
 import PageHeader from '../components/PageHeader';
+import { toastSuccess, toastError } from '../utils/swal';
 
 const CATEGORIES = ["Electronics", "Clothing", "Home Appliances", "Books", "Toys", "Beauty", "Sports", "Furniture", "Grocery"];
 
 const AddProduct = () => {
     const navigate = useNavigate();
-    const [api, contextHolder] = notification.useNotification();
     const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
@@ -369,13 +368,13 @@ const AddProduct = () => {
         };
         try {
             await axiosInstance.post('/ecommerce/addproduct', payload);
-            api.open({ type: 'success', message: 'Product Added!', description: `"${payload.title}" was added successfully.`, duration: 3 });
+            toastSuccess(`"${payload.title}" added successfully!`);
             setFormData({ title: '', brand: '', category: '', quantity: '', stockStatus: 'in_stock', offers: '', description: '', highlights: '', maxPrice: '', discount: '', image: [], sellerName: '', colors: [], warranty: '', returnPolicy: '', deliveryInfo: '', countryOfOrigin: '', inTheBox: '', weight: '', dimensions: '', tags: '' });
             setImagePreview([]);
             setTimeout(() => navigate('/'), 1500);
         } catch (error) {
             const msg = error.response?.data?.error?.message || error.response?.data?.errors?.[0]?.msg || 'Failed to add product.';
-            api.open({ type: 'error', message: 'Error', description: msg, duration: 4 });
+            toastError(msg);
         } finally {
             setSubmitting(false);
         }
@@ -383,7 +382,6 @@ const AddProduct = () => {
 
     return (
         <div className="add-product-page">
-            {contextHolder}
             <PageHeader
                 title="Add New Product"
                 subtitle="Fill in the details below to list a new product in the store"

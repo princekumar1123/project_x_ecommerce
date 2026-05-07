@@ -54,3 +54,65 @@ input, select, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #9E9E9E;
 }
+
+/* ── SweetAlert2 global theme ─────────────────────────────────────────────── */
+.swal-popup {
+  border-radius: 16px !important;
+  font-family: 'Poppins', sans-serif !important;
+  padding: 1.5rem !important;
+}
+
+.swal-btn {
+  padding: 0.55rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.swal-btn-confirm {
+  background: #1976D2;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+.swal-btn-confirm:hover { background: #1565C0; }
+
+/* Danger confirm — Swal adds .swal2-confirm on the confirm button */
+.swal2-icon.swal2-warning ~ .swal2-actions .swal-btn-confirm,
+.swal2-icon.swal2-error   ~ .swal2-actions .swal-btn-confirm {
+  background: #D32F2F;
+}
+
+.swal2-icon.swal2-warning ~ .swal2-actions .swal-btn-confirm:hover,
+.swal2-icon.swal2-error   ~ .swal2-actions .swal-btn-confirm:hover {
+  background: #B71C1C;
+}
+
+.swal-btn-cancel {
+  background: #fff;
+  color: #616161;
+  border: 1.5px solid #E0E0E0 !important;
+}
+
+.swal-btn-cancel:hover {
+  border-color: #9E9E9E !important;
+  color: #212121;
+}
+
+/* ── SweetAlert2 toast — push below sticky navbar ────────────────────────────
+   The navbar is sticky at z-index 1111 and ~64px tall.
+   We override the toast container so it sits below the navbar and
+   always renders on top of all other page content.                          */
+.swal-toast-container {
+  top: 72px !important;   /* 64px navbar + 8px gap */
+  z-index: 99999 !important;
+}
+
+/* ── Wishlist heart icon — always red ────────────────────────────────────── */
+.wishlist-btn-heart .anticon { color: #E53935 !important; }
+.wl-heart-icon,
+.wl-heart-icon svg,
+.wl-heart-icon svg path { color: #E53935 !important; fill: #E53935 !important; }

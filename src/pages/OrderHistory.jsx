@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Spin, Empty, Tag, Modal, notification } from "antd";
-import { StarOutlined, EditOutlined } from "@ant-design/icons";
+import { Spin, Empty, Tag, Modal } from "antd";
+import { StarOutlined } from "@ant-design/icons";
 import axiosInstance from "../api/axiosInstance";
 import PageHeader from "../components/PageHeader";
 import ReviewSection from "../components/ReviewSection";
@@ -19,7 +19,6 @@ function OrderHistory() {
     const [loading, setLoading] = useState(true);
     const [reviewModal, setReviewModal] = useState({ open: false, productId: null, productTitle: "" });
     const navigate = useNavigate();
-    const [api, ctx] = notification.useNotification();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -40,7 +39,6 @@ function OrderHistory() {
 
     return (
         <div style={{ maxWidth: "900px", margin: "1.5rem auto", padding: "0 1rem 3rem" }}>
-            {ctx}
             <PageHeader
                 title="My Orders"
                 subtitle="Track and manage your orders"

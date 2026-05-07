@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { notification, Spin } from "antd";
+import { Spin } from "antd";
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
 import { createPaymentOrderAsync, verifyPaymentAsync } from "../store/cartSlice";
 import { AddressCard, AddressForm } from "./AddressManager";
 import axiosInstance from "../api/axiosInstance";
 import useRazorpay from "../hooks/useRazorpay";
 import PageHeader from "../components/PageHeader";
+import { toastSuccess, toastError, toastWarning } from "../utils/swal";
 import "./Checkout.css";
 
 const STEPS = ["Delivery Address", "Order Summary", "Payment"];
@@ -18,7 +19,6 @@ export default function Checkout() {
     const { items, loading: cartLoading } = useSelector((s) => s.cart);
     const { userName } = useSelector((s) => s.auth);
     const { openPayment } = useRazorpay();
-    const [api, ctx] = notification.useNotification();
 
     const [step, setStep] = useState(0);
     const [addresses, setAddresses] = useState([]);
@@ -40,6 +40,7 @@ export default function Checkout() {
         if (cartProducts.length === 0 && !cartLoading) {
             navigate("/cart");
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cartProducts.length, cartLoading]);
 
     useEffect(() => {
@@ -64,16 +65,16 @@ export default function Checkout() {
             const newest = addrs[addrs.length - 1];
             setSelectedAddressId(newest._id);
             setShowAddForm(false);
-            api.open({ type: "success", message: "Address saved", duration: 2 });
+            toastSuccess("Address saved");
         } catch (err) {
             const msg = err.response?.data?.error?.message || err.response?.data?.errors?.[0]?.msg || "Failed to save address.";
-            api.open({ type: "error", message: msg, duration: 3 });
+            toastError(msg);
         } finally { setSavingAddr(false); }
     };
 
     const handleProceedToSummary = () => {
         if (!selectedAddressId) {
-            api.open({ type: "warning", message: "Please select a delivery address", duration: 2 });
+            toastWarning("Please select a delivery address");
             return;
         }
         setStep(1);
@@ -102,22 +103,22 @@ export default function Checkout() {
                             razorpay_signature: paymentResponse.razorpay_signature,
                             addressId: selectedAddressId,
                         })).unwrap();
-                        api.open({ type: "success", message: "Payment successful! Order placed.", duration: 2 });
+                        toastSuccess("Payment successful! Order placed.");
                         setTimeout(() => navigate("/order-confirmation"), 800);
                     } catch (err) {
-                        api.open({ type: "error", message: "Order placement failed", description: err || "Contact support.", duration: 5 });
+                        toastError("Order placement failed. Contact support.");
                     } finally { setPaymentLoading(false); }
                 },
                 onFailure: (reason) => {
                     setPaymentLoading(false);
                     if (reason !== "Payment cancelled by user.") {
-                        api.open({ type: "error", message: "Payment failed", description: reason, duration: 4 });
+                        toastError(`Payment failed: ${reason}`);
                     }
                 },
             });
         } catch (err) {
             setPaymentLoading(false);
-            api.open({ type: "error", message: "Could not initiate payment", description: err || "Please try again.", duration: 4 });
+            toastError("Could not initiate payment. Please try again.");
         }
     };
 
@@ -125,7 +126,6 @@ export default function Checkout() {
 
     return (
         <div className="checkout-page">
-            {ctx}
             <PageHeader title="Checkout" backTo="/cart" backLabel="Back to Cart" />
 
             {/* Step indicator */}

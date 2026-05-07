@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { notification } from "antd";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
 import axiosInstance from "../api/axiosInstance";
+import { toastSuccess, toastError } from "../utils/swal";
 import "../Styles/Credential.css";
 
 const Credential = ({ handleClose }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [api, contextHolder] = notification.useNotification();
     const [activeTab, setActiveTab] = useState("login");
     const [loading, setLoading] = useState(false);
 
@@ -22,7 +21,8 @@ const Credential = ({ handleClose }) => {
     });
 
     const openNotification = (type, message, description) => {
-        api.open({ type, message, description, duration: 3 });
+        if (type === "success") toastSuccess(description ? `${message}: ${description}` : message);
+        else if (type === "error") toastError(description ? `${message}: ${description}` : message);
     };
 
     const handleSignupChange = (e) => {
@@ -43,8 +43,7 @@ const Credential = ({ handleClose }) => {
             if (result.status === 201) {
                 openNotification("success", "Registered Successfully!", "You can now log in with your credentials.");
                 setActiveTab("login");
-                setSignupData({ name: "", email: "", mobile: "", password: "", gender: "" });
-            }
+                setSignupData({ name: "", email: "", mobile: "", password: "", gender: "" });            }
         } catch (error) {
             const msg = error.response?.data?.error?.message || error.response?.data?.errors?.[0]?.msg || "Registration failed. Please try again.";
             openNotification("error", "Registration Failed", msg);
@@ -82,8 +81,7 @@ const Credential = ({ handleClose }) => {
 
     return (
         <div className="auth-wrapper">
-            {/* Brand panel */}
-            <div className="auth-brand-panel">
+            {/* Brand panel */}            <div className="auth-brand-panel">
                 <img src="e-logo.png" alt="Prince Shopify" />
                 <h2>Prince Shopify</h2>
                 <p>Your one-stop shop for everything you need</p>
@@ -228,7 +226,6 @@ const Credential = ({ handleClose }) => {
                     </div>
                 )}
             </div>
-            {contextHolder}
         </div>
     );
 };

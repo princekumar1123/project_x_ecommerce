@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Spin, notification } from "antd";
+import { Spin } from "antd";
 import { DeleteOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { fetchCart, removeFromCartAsync, updateCartItemAsync } from "../store/cartSlice";
 import PageHeader from "../components/PageHeader";
+import { toastSuccess, toastError } from "../utils/swal";
 import "../Styles/AddToCart.css";
 
 const AddToCart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { items, loading } = useSelector((state) => state.cart);
-    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         dispatch(fetchCart());
@@ -20,9 +20,9 @@ const AddToCart = () => {
     const handleRemove = async (productId) => {
         try {
             await dispatch(removeFromCartAsync(productId)).unwrap();
-            api.open({ type: "success", message: "Item removed from cart", duration: 2 });
+            toastSuccess("Item removed from cart");
         } catch (err) {
-            api.open({ type: "error", message: err || "Failed to remove item", duration: 3 });
+            toastError(err || "Failed to remove item");
         }
     };
 
@@ -31,7 +31,7 @@ const AddToCart = () => {
         try {
             await dispatch(updateCartItemAsync({ productId, quantity: newQty })).unwrap();
         } catch (err) {
-            api.open({ type: "error", message: err || "Failed to update quantity", duration: 3 });
+            toastError(err || "Failed to update quantity");
         }
     };
 
@@ -58,7 +58,6 @@ const AddToCart = () => {
 
     return (
         <div className="cart-page">
-            {contextHolder}
 
             {/* Left — items */}
             <div className="cart-items-panel">

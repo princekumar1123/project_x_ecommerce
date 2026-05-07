@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { notification } from "antd";
 import { HeartFilled, DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { fetchWishlist, removeFromWishlistAsync } from "../store/wishlistSlice";
 import { addToCartAsync } from "../store/cartSlice";
 import PageHeader from "../components/PageHeader";
+import { toastSuccess, toastError } from "../utils/swal";
 import "../Styles/Wishlist.css";
 
 function SkeletonCards() {
@@ -26,7 +26,6 @@ export default function Wishlist() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { items, loading } = useSelector((s) => s.wishlist);
-    const [api, ctx] = notification.useNotification();
 
     useEffect(() => {
         dispatch(fetchWishlist());
@@ -36,9 +35,9 @@ export default function Wishlist() {
         e.stopPropagation();
         try {
             await dispatch(removeFromWishlistAsync(productId)).unwrap();
-            api.open({ type: "success", message: "Removed from wishlist", duration: 2 });
+            toastSuccess("Removed from wishlist");
         } catch {
-            api.open({ type: "error", message: "Failed to remove", duration: 2 });
+            toastError("Failed to remove");
         }
     };
 
@@ -47,15 +46,14 @@ export default function Wishlist() {
         try {
             await dispatch(addToCartAsync({ productId, quantity: 1 })).unwrap();
             await dispatch(removeFromWishlistAsync(productId)).unwrap();
-            api.open({ type: "success", message: "Moved to cart!", duration: 2 });
+            toastSuccess("Moved to cart!");
         } catch {
-            api.open({ type: "error", message: "Failed to move to cart", duration: 2 });
+            toastError("Failed to move to cart");
         }
     };
 
     return (
         <div className="wishlist-page">
-            {ctx}
             <PageHeader title="My Wishlist" backLabel="Continue Shopping" />
 
             <div className="wishlist-header">
@@ -77,7 +75,7 @@ export default function Wishlist() {
             ) : items.length === 0 ? (
                 <div className="wishlist-empty">
                     <div className="wishlist-empty-icon">
-                        <HeartFilled />
+                        <HeartFilled style={{ color: "#E53935" }} />
                     </div>
                     <h3>Your wishlist is empty</h3>
                     <p>Save items you love and come back to them anytime.</p>

@@ -22,6 +22,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminUsers from "./pages/admin/AdminUsers";
 import Wishlist from "./pages/Wishlist";
+import SessionExpiredModal from "./components/SessionExpiredModal";
 
 function App() {
     const dispatch = useDispatch();
@@ -31,29 +32,34 @@ function App() {
     }, [dispatch]);
 
     return (
-        <Routes>
-            {/* ── Store routes ── */}
-            <Route path="/" element={<DashBoard />}>
-                <Route index element={<DashboardMainContent />} />
-                <Route path="category" element={<CategoriesList />} />
-                <Route path="detail" element={<CardDetails />} />
-                <Route path="newproduct" element={<AdminRoute><AddProduct /></AdminRoute>} />
-                <Route path="cart" element={<ProtectedRoute><AddToCart /></ProtectedRoute>} />
-                <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                <Route path="orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
-                <Route path="orders/:orderId" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-                <Route path="order-confirmation" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
-                <Route path="profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-                <Route path="*" element={<PageNotFound />} />
-            </Route>
+        <>
+            {/* Global session-expired popup — rendered outside the route tree */}
+            <SessionExpiredModal />
 
-            {/* ── Admin routes ── */}
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>}>
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="users" element={<AdminUsers />} />
-            </Route>
-        </Routes>
+            <Routes>
+                {/* ── Store routes ── */}
+                <Route path="/" element={<DashBoard />}>
+                    <Route index element={<DashboardMainContent />} />
+                    <Route path="category" element={<CategoriesList />} />
+                    <Route path="detail" element={<CardDetails />} />
+                    <Route path="newproduct" element={<AdminRoute><AddProduct /></AdminRoute>} />
+                    <Route path="cart" element={<ProtectedRoute><AddToCart /></ProtectedRoute>} />
+                    <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                    <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                    <Route path="orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+                    <Route path="orders/:orderId" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+                    <Route path="order-confirmation" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
+                    <Route path="profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+                    <Route path="*" element={<PageNotFound />} />
+                </Route>
+
+                {/* ── Admin routes ── */}
+                <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>}>
+                    <Route path="products" element={<AdminProducts />} />
+                    <Route path="users" element={<AdminUsers />} />
+                </Route>
+            </Routes>
+        </>
     );
 }
 
